@@ -15,7 +15,7 @@ maintainer: "@user"
 
 ---
 
-## 문서 목록 (5개)
+## 문서 목록 (6개 + 계획)
 
 ### 1. API_REFERENCE.md
 
@@ -65,7 +65,8 @@ maintainer: "@user"
 
 **마지막 업데이트**: 2025-11-25
 **유지보수자**: @user
-**버전**: 0.1.0
+**버전**: 0.2.0
+**폴더 기능 추가**: ✅ SPEC-FOLDER-001 (6개 엔드포인트)
 
 **링크**: [API_REFERENCE.md](./API_REFERENCE.md)
 
@@ -226,7 +227,8 @@ maintainer: "@user"
 
 **마지막 업데이트**: 2025-11-25
 **유지보수자**: @user
-**버전**: 0.1.0
+**버전**: 0.2.0
+**최신 버전**: 0.2.0 (SPEC-FOLDER-001 추가)
 
 **링크**: [CHANGELOG.md](./CHANGELOG.md)
 
@@ -296,6 +298,15 @@ index.md (인덱스)
 | Specifications | API_REFERENCE.md, DATABASE_SCHEMA.md | @API-*, @DB-* |
 | Acceptance Criteria | PROJECT_STRUCTURE.md | @PROJECT-STRUCTURE |
 | Traceability | CHANGELOG.md | @RELEASE-V0.1.0 |
+
+### SPEC-FOLDER-001 (v1.0.0) - NEW
+
+| SPEC 섹션 | Living Document | 대응 TAG |
+|---------|----------------|---------|
+| Requirements (FR-1~9) | API_REFERENCE.md | @API-POST-FOLDERS, @API-GET-FOLDERS, ... |
+| Specifications | API_REFERENCE.md, DATABASE_SCHEMA.md | @API-*, @DB-FOLDER-* |
+| Acceptance Criteria | CHANGELOG.md (v0.2.0) | @RELEASE-V0.2.0 |
+| Traceability | TAG_MAPPING.md (계획) | @SPEC-FOLDER-001 |
 
 ---
 
@@ -440,7 +451,18 @@ index.md (인덱스)
 
 ## 문서 통계
 
-### v0.1.0 (2025-11-25)
+### v0.2.0 (2025-11-25) - SPEC-FOLDER-001 추가
+
+| 문서 | 라인 수 | 섹션 | 예시 | 표 |
+|------|--------|------|------|-----|
+| API_REFERENCE.md | ~850 | 14 | 45 | 12 |
+| PROJECT_STRUCTURE.md | 440 | 10 | 5 | 4 |
+| DATABASE_SCHEMA.md | 520 | 15 | 15 | 8 |
+| CHANGELOG.md | ~500 | 13 | 3 | 4 |
+| index.md | ~600 | 8 | 2 | 7 |
+| **합계** | **~3,310** | **60** | **70** | **35** |
+
+### v0.1.0 (2025-11-25) - 초기 버전
 
 | 문서 | 라인 수 | 섹션 | 예시 | 표 |
 |------|--------|------|------|-----|
@@ -451,12 +473,13 @@ index.md (인덱스)
 | index.md | 현재 | 6 | 2 | 5 |
 | **합계** | **~2,180** | **51** | **49** | **25** |
 
-### 커버리지
+### 커버리지 (v0.2.0)
 
-- **API 엔드포인트**: 100% (8/8)
+- **API 엔드포인트**: 100% (14/14) - WordSet 8개 + Folder 6개
 - **프로젝트 구조**: 100% (9개 주요 디렉토리)
-- **데이터베이스 테이블**: 100% (2/2)
-- **SPEC 요구사항**: 100% (FR, NFR, AC)
+- **데이터베이스 테이블**: 100% (3/3) - WordSet, Word, Folder
+- **SPEC 요구사항**: 100% (WORDSET 8 FR + FOLDER 9 FR)
+- **SPEC 문서**: 100% (2개 SPEC 완료)
 
 ---
 
@@ -476,19 +499,23 @@ index.md (인덱스)
 
 ---
 
-## 문서 마이그레이션 (향후)
+## 문서 마이그레이션
 
-### v0.2.0 추가 문서 (계획)
+### v0.2.0 추가 예정 (SPEC-FOLDER-001)
 
-- `FOLDER_FEATURE.md` - 폴더 기능 명세
-- `PERFORMANCE_GUIDE.md` - 성능 최적화 가이드
-- `UI_COMPONENTS.md` - UI 컴포넌트 카탈로그
+- ✅ `API_REFERENCE.md` - Folder 엔드포인트 추가 (완료)
+- ✅ `CHANGELOG.md` - v0.2.0 항목 추가 (완료)
+- 📝 `INTEGRATION_GUIDE.md` - 폴더 기능 통합 가이드 (예정)
+- 📝 `NULLIFY_POLICY_GUIDE.md` - Nullify 정책 상세 설명 (예정)
+- 📝 `TAG_MAPPING.md` - 요구사항별 구현 매핑 (예정)
 
 ### v0.3.0 추가 문서 (계획)
 
 - `AUTHENTICATION.md` - 인증 시스템
 - `DEPLOYMENT_GUIDE.md` - 배포 가이드
 - `SECURITY_GUIDE.md` - 보안 가이드
+- `PERFORMANCE_GUIDE.md` - 성능 최적화 가이드
+- `UI_COMPONENTS.md` - UI 컴포넌트 카탈로그
 
 ---
 
