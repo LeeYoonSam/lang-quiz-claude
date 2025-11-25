@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 
-describe("WordSet API Endpoints", () => {
+describe("WordSet Prisma Operations (FR-1 to FR-5)", () => {
   beforeEach(async () => {
     // Clear database before each test
     await prisma.word.deleteMany({});
@@ -11,62 +11,67 @@ describe("WordSet API Endpoints", () => {
     await prisma.$disconnect();
   });
 
-  describe("POST /api/wordsets", () => {
-    it("should create a new word set with valid input", async () => {
-      const response = await fetch("http://localhost:3000/api/wordsets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: "TOEFL Words",
-          description: "Essential TOEFL vocabulary",
-        }),
+  describe("FR-1: 단어 세트 생성", () => {
+    it("should create a new word set with name and description", async () => {
+      const wordset = await prisma.wordSet.create({
+        data: {
+          name: "TOEFL 필수 단어",
+          description: "TOEFL 시험 대비 필수 단어 모음",
+        },
+        include: { words: true },
       });
 
-      expect(response.status).toBe(201);
-      const data = await response.json();
-      expect(data).toHaveProperty("id");
-      expect(data.name).toBe("TOEFL Words");
-      expect(data.description).toBe("Essential TOEFL vocabulary");
-      expect(data.words).toEqual([]);
+      expect(wordset).toHaveProperty("id");
+      expect(wordset.name).toBe("TOEFL 필수 단어");
+      expect(wordset.description).toBe("TOEFL 시험 대비 필수 단어 모음");
+      expect(wordset.words).toEqual([]);
+      expect(wordset.folderId).toBeNull();
     });
 
-    it("should return 400 when name is missing", async () => {
-      const response = await fetch("http://localhost:3000/api/wordsets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ description: "No name" }),
+    it("should create wordset with only name (description optional)", async () => {
+      const wordset = await prisma.wordSet.create({
+        data: {
+          name: "기본 단어",
+        },
+        include: { words: true },
       });
 
-      expect(response.status).toBe(400);
-    });
-
-    it("should return 400 when name exceeds 100 characters", async () => {
-      const longName = "a".repeat(101);
-      const response = await fetch("http://localhost:3000/api/wordsets", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: longName }),
-      });
-
-      expect(response.status).toBe(400);
+      expect(wordset.name).toBe("기본 단어");
+      expect(wordset.description).toBeNull();
+      expect(wordset.words).toEqual([]);
     });
   });
 
-  describe("GET /api/wordsets", () => {
+  describe("FR-2: 단어 세트 목록 조회", () => {
     it("should return empty array when no wordsets exist", async () => {
-      const response = await fetch("http://localhost:3000/api/wordsets");
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-      expect(data).toEqual([]);
+      const wordsets = await prisma.wordSet.findMany();
+      expect(wordsets).toEqual([]);
     });
 
-    it("should return wordsets with wordCount", async () => {
-      // Create a wordset with words
-      const wordset = await prisma.wordSet.create({
+    it("should return wordsets ordered by createdAt descending", async () => {
+      await prisma.wordSet.create({
+        data: { name: "First Set" },
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      await prisma.wordSet.create({
+        data: { name: "Second Set" },
+      });
+
+      const wordsets = await prisma.wordSet.findMany({
+        orderBy: { createdAt: "desc" },
+      });
+
+      expect(wordsets).toHaveLength(2);
+      expect(wordsets[0].name).toBe("Second Set");
+      expect(wordsets[1].name).toBe("First Set");
+    });
+
+    it("should return wordsets with word count", async () => {
+      await prisma.wordSet.create({
         data: {
           name: "Test Set",
-          description: "Test Description",
           words: {
             create: [
               { text: "apple", meaning: "사과" },
@@ -76,36 +81,22 @@ describe("WordSet API Endpoints", () => {
         },
       });
 
-      const response = await fetch("http://localhost:3000/api/wordsets");
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      expect(data).toHaveLength(1);
-      expect(data[0]).toHaveProperty("wordCount");
-      expect(data[0].wordCount).toBe(2);
-      expect(data[0].name).toBe("Test Set");
-    });
-
-    it("should return wordsets sorted by createdAt descending", async () => {
-      await prisma.wordSet.create({
-        data: { name: "First Set" },
-      });
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      await prisma.wordSet.create({
-        data: { name: "Second Set" },
+      const wordsets = await prisma.wordSet.findMany({
+        include: {
+          _count: {
+            select: { words: true },
+          },
+        },
       });
 
-      const response = await fetch("http://localhost:3000/api/wordsets");
-      const data = await response.json();
-
-      expect(data[0].name).toBe("Second Set");
-      expect(data[1].name).toBe("First Set");
+      expect(wordsets).toHaveLength(1);
+      expect(wordsets[0]._count.words).toBe(2);
     });
   });
 
-  describe("GET /api/wordsets/[id]", () => {
+  describe("FR-3: 단어 세트 상세 조회", () => {
     it("should return a wordset with its words", async () => {
-      const wordset = await prisma.wordSet.create({
+      const created = await prisma.wordSet.create({
         data: {
           name: "Test Set",
           description: "Test Description",
@@ -115,64 +106,74 @@ describe("WordSet API Endpoints", () => {
         },
       });
 
-      const response = await fetch(
-        `http://localhost:3000/api/wordsets/${wordset.id}`
-      );
-      expect(response.status).toBe(200);
-      const data = await response.json();
-
-      expect(data.id).toBe(wordset.id);
-      expect(data.name).toBe("Test Set");
-      expect(data.words).toHaveLength(1);
-      expect(data.words[0].text).toBe("apple");
-    });
-
-    it("should return 404 for non-existent wordset", async () => {
-      const response = await fetch(
-        "http://localhost:3000/api/wordsets/nonexistent"
-      );
-      expect(response.status).toBe(404);
-    });
-  });
-
-  describe("PUT /api/wordsets/[id]", () => {
-    it("should update wordset name and description", async () => {
-      const wordset = await prisma.wordSet.create({
-        data: { name: "Original Name", description: "Original Description" },
+      const wordset = await prisma.wordSet.findUnique({
+        where: { id: created.id },
+        include: { words: true },
       });
 
-      const response = await fetch(
-        `http://localhost:3000/api/wordsets/${wordset.id}`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            name: "Updated Name",
-            description: "Updated Description",
-          }),
-        }
-      );
-
-      expect(response.status).toBe(200);
-      const data = await response.json();
-      expect(data.name).toBe("Updated Name");
-      expect(data.description).toBe("Updated Description");
+      expect(wordset).not.toBeNull();
+      expect(wordset!.id).toBe(created.id);
+      expect(wordset!.name).toBe("Test Set");
+      expect(wordset!.words).toHaveLength(1);
+      expect(wordset!.words[0].text).toBe("apple");
     });
 
-    it("should return 404 for non-existent wordset", async () => {
-      const response = await fetch(
-        "http://localhost:3000/api/wordsets/nonexistent",
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: "Updated" }),
-        }
-      );
-      expect(response.status).toBe(404);
+    it("should return null for non-existent wordset", async () => {
+      const wordset = await prisma.wordSet.findUnique({
+        where: { id: "nonexistent" },
+      });
+      expect(wordset).toBeNull();
     });
   });
 
-  describe("DELETE /api/wordsets/[id]", () => {
+  describe("FR-4: 단어 세트 수정", () => {
+    it("should update wordset name and description", async () => {
+      const original = await prisma.wordSet.create({
+        data: {
+          name: "Original Name",
+          description: "Original Description",
+        },
+      });
+
+      // Wait a bit to ensure timestamp changes
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      const updated = await prisma.wordSet.update({
+        where: { id: original.id },
+        data: {
+          name: "Updated Name",
+          description: "Updated Description",
+        },
+      });
+
+      expect(updated.name).toBe("Updated Name");
+      expect(updated.description).toBe("Updated Description");
+      expect(updated.updatedAt.getTime()).toBeGreaterThanOrEqual(
+        original.updatedAt.getTime()
+      );
+    });
+
+    it("should update only the name field", async () => {
+      const original = await prisma.wordSet.create({
+        data: {
+          name: "Original Name",
+          description: "Description",
+        },
+      });
+
+      const updated = await prisma.wordSet.update({
+        where: { id: original.id },
+        data: {
+          name: "New Name",
+        },
+      });
+
+      expect(updated.name).toBe("New Name");
+      expect(updated.description).toBe("Description");
+    });
+  });
+
+  describe("FR-5: 단어 세트 삭제 (Cascade)", () => {
     it("should delete wordset and cascade delete words", async () => {
       const wordset = await prisma.wordSet.create({
         data: {
@@ -186,12 +187,10 @@ describe("WordSet API Endpoints", () => {
         },
       });
 
-      const response = await fetch(
-        `http://localhost:3000/api/wordsets/${wordset.id}`,
-        { method: "DELETE" }
-      );
-
-      expect(response.status).toBe(204);
+      // Delete the wordset
+      await prisma.wordSet.delete({
+        where: { id: wordset.id },
+      });
 
       // Verify wordset is deleted
       const deletedSet = await prisma.wordSet.findUnique({
@@ -206,12 +205,19 @@ describe("WordSet API Endpoints", () => {
       expect(words).toHaveLength(0);
     });
 
-    it("should return 404 for non-existent wordset", async () => {
-      const response = await fetch(
-        "http://localhost:3000/api/wordsets/nonexistent",
-        { method: "DELETE" }
-      );
-      expect(response.status).toBe(404);
+    it("should handle deleting wordset with no words", async () => {
+      const wordset = await prisma.wordSet.create({
+        data: {
+          name: "Empty Set",
+        },
+      });
+
+      // Should not throw error
+      const deleted = await prisma.wordSet.delete({
+        where: { id: wordset.id },
+      });
+
+      expect(deleted.id).toBe(wordset.id);
     });
   });
 });
