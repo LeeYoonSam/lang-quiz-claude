@@ -30,6 +30,7 @@ export async function GET(
   }
 }
 
+// @API-PUT-WORDSETS-FOLDER (extended with folderId support)
 export async function PUT(
   request: Request,
   context: { params: Promise<{ id: string }> }
@@ -65,14 +66,37 @@ export async function PUT(
       );
     }
 
+    // Validate folderId if provided and not null
+    if (body.folderId !== undefined && body.folderId !== null) {
+      const folder = await prisma.folder.findUnique({
+        where: { id: body.folderId },
+      });
+      if (!folder) {
+        return NextResponse.json(
+          { error: "Folder not found" },
+          { status: 400 }
+        );
+      }
+    }
+
     // Update wordset
+    const updateData: any = {};
+    if (body.name !== undefined) updateData.name = body.name;
+    if (body.description !== undefined) updateData.description = body.description;
+    if (body.folderId !== undefined) updateData.folderId = body.folderId;
+
     const updated = await prisma.wordSet.update({
       where: { id },
-      data: {
-        name: body.name,
-        description: body.description,
+      data: updateData,
+      include: {
+        words: true,
+        folder: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
       },
-      include: { words: true },
     });
 
     return NextResponse.json(updated);

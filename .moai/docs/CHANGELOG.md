@@ -1,8 +1,8 @@
 ---
 title: 변경 로그
-description: Word Set Management System의 버전 이력 및 변경 사항
-version: 0.1.0
-spec: SPEC-WORDSET-001
+description: Word Set Management System의 버전 이력 및 변경 사항 (Folder 기능 포함)
+version: 0.2.0
+spec: SPEC-WORDSET-001, SPEC-FOLDER-001
 lastUpdated: 2025-11-25
 maintainer: "@user"
 ---
@@ -23,6 +23,73 @@ maintainer: "@user"
 - **Deprecated**: 곧 제거될 기능
 - **Removed**: 제거된 기능
 - **Security**: 보안 관련 변경
+
+---
+
+## [0.2.0] - 2025-11-25
+
+### 폴더 기능 추가 (SPEC-FOLDER-001)
+
+이 버전에서는 단어 세트를 조직화하는 폴더 기능을 추가했습니다.
+
+#### Added
+
+##### 폴더 관리 기능
+
+- **Folder API 엔드포인트** (6개)
+  - `POST /api/folders` - 폴더 생성
+  - `GET /api/folders` - 폴더 목록 조회 (통계 포함)
+  - `GET /api/folders/[id]` - 폴더 상세 조회
+  - `PUT /api/folders/[id]` - 폴더 정보 수정
+  - `DELETE /api/folders/[id]` - 폴더 삭제 (Nullify 정책)
+  - `GET /api/folders/[id]/wordsets` - 폴더별 단어 세트 조회
+
+- **데이터베이스 확장**
+  - Folder 모델 추가 (id, name, description, parentId, wordSets, createdAt, updatedAt)
+  - WordSet 모델에 folder 관계 추가
+  - onDelete: SetNull 정책으로 데이터 안전성 보장
+  - folderId 인덱스 최적화
+
+- **기존 API 확장**
+  - `POST /api/wordsets`에 folderId 파라미터 지원
+  - `PUT /api/wordsets/[id]`에서 folderId 변경 지원
+  - `GET /api/wordsets`에 폴더 정보 포함 (folderId, folder 객체)
+
+- **UI 컴포넌트** (신규)
+  - FolderList - 폴더 목록 그리드 (통계 포함)
+  - FolderCard - 개별 폴더 카드
+  - FolderForm - 폴더 생성/수정 폼
+  - FolderDetail - 폴더 상세 페이지
+  - FolderSelector - WordSet 생성/수정 시 폴더 선택 드롭다운
+
+- **UI/UX 개선**
+  - 폴더 기반 단어 세트 필터링
+  - 루트 영역 (folderId=null) 세트 관리
+  - 실시간 폴더 통계 업데이트
+  - 반응형 폴더 카드 디자인
+
+- **문서**
+  - API_REFERENCE.md에 Folder 엔드포인트 문서 추가
+  - DATABASE_SCHEMA.md 업데이트
+  - 폴더 기능 사용 설명서
+
+##### 성능 특성
+
+- **폴더 목록 조회**: < 300ms (50개 폴더 기준)
+- **폴더별 세트 조회**: < 500ms (500개 세트 기준)
+- **Nullify 정책**: 폴더 삭제 시 포함된 세트를 루트로 이동
+
+#### Changed
+
+- WordSet 응답에 folder 객체 포함
+- API_REFERENCE.md 버전 0.2.0으로 업그레이드
+- 기존 단어 세트는 자동으로 루트 영역(folderId=null)에 할당
+
+#### Security
+
+- 폴더 생성/수정 시 입력 유효성 검증 강화
+- Cascade Delete 대신 SetNull 정책으로 데이터 손실 방지
+- 폴더-세트 관계 무결성 보증
 
 ---
 

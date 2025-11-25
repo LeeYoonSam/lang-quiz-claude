@@ -1,8 +1,8 @@
 ---
 title: API 레퍼런스
-description: Word Set Management System API 엔드포인트 상세 문서
-version: 0.1.0
-spec: SPEC-WORDSET-001
+description: Word Set Management System API 엔드포인트 상세 문서 (Folder 기능 포함)
+version: 0.2.0
+spec: SPEC-WORDSET-001, SPEC-FOLDER-001
 lastUpdated: 2025-11-25
 maintainer: "@user"
 ---
@@ -343,6 +343,418 @@ curl -X DELETE http://localhost:3000/api/wordsets/clx1a2b3c4d5e6f7g8h9
 
 ---
 
+## Folder 엔드포인트 (SPEC-FOLDER-001)
+
+### 1. 폴더 생성
+
+#### 요청
+
+```
+POST /api/folders
+Content-Type: application/json
+```
+
+**요청 본문**:
+
+```json
+{
+  "name": "TOEFL 단어",
+  "description": "TOEFL 시험 대비를 위한 폴더"
+}
+```
+
+**필드 설명**:
+
+| 필드 | 타입 | 필수 | 제약 조건 | 설명 |
+|------|------|------|---------|------|
+| name | String | Yes | 1-100자 | 폴더 이름 |
+| description | String | No | 0-500자 | 폴더 설명 |
+
+#### 응답
+
+**성공 (201 Created)**:
+
+```json
+{
+  "id": "clx5f6g7h8i9j0k1l2m3",
+  "name": "TOEFL 단어",
+  "description": "TOEFL 시험 대비를 위한 폴더",
+  "parentId": null,
+  "createdAt": "2025-11-25T10:00:00.000Z",
+  "updatedAt": "2025-11-25T10:00:00.000Z",
+  "_count": {
+    "wordSets": 0
+  }
+}
+```
+
+#### 사용 예시
+
+```bash
+curl -X POST http://localhost:3000/api/folders \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "TOEFL 단어",
+    "description": "TOEFL 시험 대비를 위한 폴더"
+  }'
+```
+
+#### 성능 특성
+
+- **응답 시간**: < 100ms
+- **통계 계산**: 자동 포함
+
+---
+
+### 2. 폴더 목록 조회 (통계 포함)
+
+#### 요청
+
+```
+GET /api/folders
+```
+
+#### 응답
+
+**성공 (200 OK)**:
+
+```json
+[
+  {
+    "id": "clx5f6g7h8i9j0k1l2m3",
+    "name": "TOEFL 단어",
+    "description": "TOEFL 시험 대비를 위한 폴더",
+    "parentId": null,
+    "createdAt": "2025-11-25T10:00:00.000Z",
+    "updatedAt": "2025-11-25T10:00:00.000Z",
+    "_count": {
+      "wordSets": 5
+    }
+  },
+  {
+    "id": "clx6g7h8i9j0k1l2m3n4",
+    "name": "비즈니스 영어",
+    "description": "비즈니스 환경에서 필요한 영어",
+    "parentId": null,
+    "createdAt": "2025-11-25T09:30:00.000Z",
+    "updatedAt": "2025-11-25T09:30:00.000Z",
+    "_count": {
+      "wordSets": 3
+    }
+  }
+]
+```
+
+#### 응답 필드
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| id | String | 폴더 고유 식별자 |
+| name | String | 폴더 이름 |
+| description | String | 폴더 설명 |
+| parentId | String \| null | 향후 중첩 폴더용 필드 |
+| createdAt | DateTime | 생성 시간 |
+| updatedAt | DateTime | 마지막 업데이트 시간 |
+| _count.wordSets | Number | 폴더에 포함된 단어 세트 개수 |
+
+#### 사용 예시
+
+```bash
+curl http://localhost:3000/api/folders
+```
+
+#### 성능 특성
+
+- **응답 시간**: < 300ms (50개 폴더 기준)
+- **조회 순서**: 생성일 기준 최신순
+
+---
+
+### 3. 폴더 상세 조회
+
+#### 요청
+
+```
+GET /api/folders/[id]
+```
+
+**경로 파라미터**:
+
+| 파라미터 | 타입 | 설명 |
+|---------|------|------|
+| id | String | 폴더 고유 식별자 |
+
+#### 응답
+
+**성공 (200 OK)**:
+
+```json
+{
+  "id": "clx5f6g7h8i9j0k1l2m3",
+  "name": "TOEFL 단어",
+  "description": "TOEFL 시험 대비를 위한 폴더",
+  "parentId": null,
+  "createdAt": "2025-11-25T10:00:00.000Z",
+  "updatedAt": "2025-11-25T10:00:00.000Z",
+  "_count": {
+    "wordSets": 5
+  }
+}
+```
+
+**실패 (404 Not Found)**:
+
+```json
+{
+  "error": "폴더를 찾을 수 없습니다",
+  "status": 404
+}
+```
+
+#### 사용 예시
+
+```bash
+curl http://localhost:3000/api/folders/clx5f6g7h8i9j0k1l2m3
+```
+
+---
+
+### 4. 폴더 수정
+
+#### 요청
+
+```
+PUT /api/folders/[id]
+Content-Type: application/json
+```
+
+**경로 파라미터**:
+
+| 파라미터 | 타입 | 설명 |
+|---------|------|------|
+| id | String | 폴더 고유 식별자 |
+
+**요청 본문**:
+
+```json
+{
+  "name": "TOEFL 필수 단어",
+  "description": "TOEFL 시험 필수 단어 모음"
+}
+```
+
+#### 응답
+
+**성공 (200 OK)**:
+
+```json
+{
+  "id": "clx5f6g7h8i9j0k1l2m3",
+  "name": "TOEFL 필수 단어",
+  "description": "TOEFL 시험 필수 단어 모음",
+  "parentId": null,
+  "createdAt": "2025-11-25T10:00:00.000Z",
+  "updatedAt": "2025-11-25T10:30:00.000Z"
+}
+```
+
+#### 사용 예시
+
+```bash
+curl -X PUT http://localhost:3000/api/folders/clx5f6g7h8i9j0k1l2m3 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "TOEFL 필수 단어",
+    "description": "TOEFL 시험 필수 단어 모음"
+  }'
+```
+
+---
+
+### 5. 폴더 삭제 (Nullify 정책)
+
+#### 요청
+
+```
+DELETE /api/folders/[id]
+```
+
+**경로 파라미터**:
+
+| 파라미터 | 타입 | 설명 |
+|---------|------|------|
+| id | String | 폴더 고유 식별자 |
+
+#### 응답
+
+**성공 (200 OK)**:
+
+```json
+{
+  "message": "폴더가 삭제되었습니다.",
+  "movedWordSets": 5
+}
+```
+
+#### 주의사항
+
+- **Nullify 정책**: 폴더 삭제 시 포함된 단어 세트는 **루트 영역(folderId=null)으로 이동**됨
+- 단어 세트는 **삭제되지 않음** (데이터 안전성 보장)
+- 응답의 `movedWordSets` 필드로 이동된 세트 개수 확인 가능
+
+#### 사용 예시
+
+```bash
+curl -X DELETE http://localhost:3000/api/folders/clx5f6g7h8i9j0k1l2m3
+```
+
+---
+
+### 6. 폴더별 단어 세트 조회
+
+#### 요청
+
+```
+GET /api/folders/[id]/wordsets
+```
+
+**경로 파라미터**:
+
+| 파라미터 | 타입 | 설명 |
+|---------|------|------|
+| id | String | 폴더 고유 식별자 |
+
+#### 응답
+
+**성공 (200 OK)**:
+
+```json
+[
+  {
+    "id": "clx1a2b3c4d5e6f7g8h9",
+    "name": "Reading 단어",
+    "description": "TOEFL Reading 섹션 단어",
+    "folderId": "clx5f6g7h8i9j0k1l2m3",
+    "wordCount": 50,
+    "createdAt": "2025-11-25T10:05:00.000Z",
+    "updatedAt": "2025-11-25T10:05:00.000Z"
+  },
+  {
+    "id": "clx2b3c4d5e6f7g8h9i0",
+    "name": "Listening 단어",
+    "description": "TOEFL Listening 섹션 단어",
+    "folderId": "clx5f6g7h8i9j0k1l2m3",
+    "wordCount": 30,
+    "createdAt": "2025-11-25T10:10:00.000Z",
+    "updatedAt": "2025-11-25T10:10:00.000Z"
+  }
+]
+```
+
+#### 응답 필드
+
+| 필드 | 타입 | 설명 |
+|------|------|------|
+| id | String | 단어 세트 고유 식별자 |
+| name | String | 단어 세트 이름 |
+| description | String | 단어 세트 설명 |
+| folderId | String | 폴더 ID |
+| wordCount | Number | 세트 내 단어 개수 |
+| createdAt | DateTime | 생성 시간 |
+| updatedAt | DateTime | 마지막 업데이트 시간 |
+
+#### 사용 예시
+
+```bash
+curl http://localhost:3000/api/folders/clx5f6g7h8i9j0k1l2m3/wordsets
+```
+
+#### 성능 특성
+
+- **응답 시간**: < 500ms (500개 단어 세트 기준)
+
+---
+
+## Word Set 엔드포인트 (Folder 지원 추가)
+
+### 기존 엔드포인트 확장
+
+#### POST /api/wordsets (folderId 지원 추가)
+
+**요청 본문** (업데이트):
+
+```json
+{
+  "name": "Listening 단어",
+  "description": "TOEFL Listening 섹션 단어",
+  "folderId": "clx5f6g7h8i9j0k1l2m3"
+}
+```
+
+**응답** (201 Created):
+
+```json
+{
+  "id": "clx6g7h8i9j0k1l2m3n4",
+  "name": "Listening 단어",
+  "description": "TOEFL Listening 섹션 단어",
+  "folderId": "clx5f6g7h8i9j0k1l2m3",
+  "folder": {
+    "id": "clx5f6g7h8i9j0k1l2m3",
+    "name": "TOEFL 단어"
+  },
+  "words": [],
+  "createdAt": "2025-11-25T10:10:00.000Z",
+  "updatedAt": "2025-11-25T10:10:00.000Z"
+}
+```
+
+#### GET /api/wordsets (폴더 정보 포함)
+
+**응답** (200 OK):
+
+```json
+[
+  {
+    "id": "clx1a2b3c4d5e6f7g8h9",
+    "name": "TOEFL 단어",
+    "description": "TOEFL 시험 대비 필수 단어 모음",
+    "folderId": "clx5f6g7h8i9j0k1l2m3",
+    "folder": {
+      "id": "clx5f6g7h8i9j0k1l2m3",
+      "name": "TOEFL 단어"
+    },
+    "wordCount": 25,
+    "createdAt": "2025-11-25T10:30:00.000Z",
+    "updatedAt": "2025-11-25T10:30:00.000Z"
+  },
+  {
+    "id": "clx2b3c4d5e6f7g8h9i0",
+    "name": "일상 영어",
+    "description": "매일 사용하는 기본 영어 단어",
+    "folderId": null,
+    "folder": null,
+    "wordCount": 50,
+    "createdAt": "2025-11-25T15:20:00.000Z",
+    "updatedAt": "2025-11-25T15:20:00.000Z"
+  }
+]
+```
+
+#### PUT /api/wordsets/[id] (폴더 할당/변경 지원)
+
+**요청 본문** (업데이트):
+
+```json
+{
+  "name": "Updated Name",
+  "description": "Updated description",
+  "folderId": "clx5f6g7h8i9j0k1l2m3"
+}
+```
+
+---
+
 ## Word 엔드포인트
 
 ### 6. 단어 추가
@@ -595,4 +1007,5 @@ curl -X DELETE http://localhost:3000/api/words/clx2b3c4d5e6f7g8h9i0
 ---
 
 **마지막 업데이트**: 2025-11-25
-**SPEC 참조**: SPEC-WORDSET-001 (v0.1.0)
+**SPEC 참조**: SPEC-WORDSET-001 (v0.1.0), SPEC-FOLDER-001 (v1.0.0)
+**문서 버전**: 0.2.0
