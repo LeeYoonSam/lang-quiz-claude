@@ -1,9 +1,9 @@
 ---
 id: SPEC-WORDSET-001
 version: 0.1.0
-status: draft
+status: completed
 created: 2025-11-24
-updated: 2025-11-24
+updated: 2025-11-25
 author: "@user"
 priority: high
 ---
@@ -12,6 +12,7 @@ priority: high
 
 | 버전  | 날짜       | 작성자  | 변경 내용           |
 | ----- | ---------- | ------- | ------------------- |
+| 0.1.0 | 2025-11-25 | @user   | 구현 및 문서화 완료 |
 | 0.1.0 | 2025-11-24 | @user   | 초기 SPEC 생성      |
 
 ---
