@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model WordSet {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  folderId    String?  // Future folder feature support
+  words       Word[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([folderId])
+}
+
+model Word {
+  id          String   @id @default(cuid())
+  text        String   // English word
+  meaning     String   // Korean meaning
+  wordSetId   String
+  wordSet     WordSet  @relation(fields: [wordSetId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([wordSetId])
+}

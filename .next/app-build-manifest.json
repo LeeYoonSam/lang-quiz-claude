@@ -1,0 +1,82 @@
+{
+  "pages": {
+    "/_not-found/page": [
+      "static/chunks/webpack-68f22649503f8e75.js",
+      "static/chunks/4bd1b696-58c1aec0686d717d.js",
+      "static/chunks/517-13bed4b8b4329519.js",
+      "static/chunks/main-app-3419ef4193af9415.js",
+      "static/chunks/app/_not-found/page-e361e2d0e184db19.js"
+    ],
+    "/layout": [
+      "static/chunks/webpack-68f22649503f8e75.js",
+      "static/chunks/4bd1b696-58c1aec0686d717d.js",
+      "static/chunks/517-13bed4b8b4329519.js",
+      "static/chunks/main-app-3419ef4193af9415.js",
+      "static/css/45f3fbfe8f6cde56.css",
+      "static/chunks/239-4016a0ce58864266.js",
+      "static/chunks/app/layout-d70fd82daffd3146.js"
+    ],
+    "/api/words/[id]/route": [
+      "static/chunks/webpack-68f22649503f8e75.js",
+      "static/chunks/4bd1b696-58c1aec0686d717d.js",
+      "static/chunks/517-13bed4b8b4329519.js",
+      "static/chunks/main-app-3419ef4193af9415.js",
+      "static/chunks/app/api/words/[id]/route-668585b95dfc8c1c.js"
+    ],
+    "/api/wordsets/[id]/route": [
+      "static/chunks/webpack-68f22649503f8e75.js",
+      "static/chunks/4bd1b696-58c1aec0686d717d.js",
+      "static/chunks/517-13bed4b8b4329519.js",
+      "static/chunks/main-app-3419ef4193af9415.js",
+      "static/chunks/app/api/wordsets/[id]/route-85f273f68ae9041e.js"
+    ],
+    "/api/wordsets/route": [
+      "static/chunks/webpack-68f22649503f8e75.js",
+      "static/chunks/4bd1b696-58c1aec0686d717d.js",
+      "static/chunks/517-13bed4b8b4329519.js",
+      "static/chunks/main-app-3419ef4193af9415.js",
+      "static/chunks/app/api/wordsets/route-06256fa9730031bc.js"
+    ],
+    "/api/wordsets/[id]/words/route": [
+      "static/chunks/webpack-68f22649503f8e75.js",
+      "static/chunks/4bd1b696-58c1aec0686d717d.js",
+      "static/chunks/517-13bed4b8b4329519.js",
+      "static/chunks/main-app-3419ef4193af9415.js",
+      "static/chunks/app/api/wordsets/[id]/words/route-e126f21117b4aa30.js"
+    ],
+    "/page": [
+      "static/chunks/webpack-68f22649503f8e75.js",
+      "static/chunks/4bd1b696-58c1aec0686d717d.js",
+      "static/chunks/517-13bed4b8b4329519.js",
+      "static/chunks/main-app-3419ef4193af9415.js",
+      "static/chunks/app/page-8d03fab6d4eedaf4.js"
+    ],
+    "/wordsets/[id]/page": [
+      "static/chunks/webpack-68f22649503f8e75.js",
+      "static/chunks/4bd1b696-58c1aec0686d717d.js",
+      "static/chunks/517-13bed4b8b4329519.js",
+      "static/chunks/main-app-3419ef4193af9415.js",
+      "static/chunks/239-4016a0ce58864266.js",
+      "static/chunks/743-f1afb70575919633.js",
+      "static/chunks/app/wordsets/[id]/page-850b9a469004cb59.js"
+    ],
+    "/wordsets/page": [
+      "static/chunks/webpack-68f22649503f8e75.js",
+      "static/chunks/4bd1b696-58c1aec0686d717d.js",
+      "static/chunks/517-13bed4b8b4329519.js",
+      "static/chunks/main-app-3419ef4193af9415.js",
+      "static/chunks/239-4016a0ce58864266.js",
+      "static/chunks/743-f1afb70575919633.js",
+      "static/chunks/app/wordsets/page-00d056c1c6fab3a9.js"
+    ],
+    "/wordsets/new/page": [
+      "static/chunks/webpack-68f22649503f8e75.js",
+      "static/chunks/4bd1b696-58c1aec0686d717d.js",
+      "static/chunks/517-13bed4b8b4329519.js",
+      "static/chunks/main-app-3419ef4193af9415.js",
+      "static/chunks/239-4016a0ce58864266.js",
+      "static/chunks/743-f1afb70575919633.js",
+      "static/chunks/app/wordsets/new/page-049dfdd7025fb90c.js"
+    ]
+  }
+}
