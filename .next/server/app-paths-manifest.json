@@ -1,0 +1,11 @@
+{
+  "/_not-found/page": "app/_not-found/page.js",
+  "/api/words/[id]/route": "app/api/words/[id]/route.js",
+  "/api/wordsets/[id]/route": "app/api/wordsets/[id]/route.js",
+  "/api/wordsets/route": "app/api/wordsets/route.js",
+  "/api/wordsets/[id]/words/route": "app/api/wordsets/[id]/words/route.js",
+  "/page": "app/page.js",
+  "/wordsets/[id]/page": "app/wordsets/[id]/page.js",
+  "/wordsets/page": "app/wordsets/page.js",
+  "/wordsets/new/page": "app/wordsets/new/page.js"
+}

@@ -86,3 +86,5 @@ docs/out/
 .uv_cache
 .uv-cache
 .venv_issue43_py313
+
+/generated/prisma
