@@ -51,8 +51,10 @@ logs/
 # Test coverage
 .coverage
 coverage.json
+coverage/
 
 # Next.js build output
+.next/
 docs/.next/
 docs/out/
 
@@ -66,6 +68,7 @@ docs/out/
 # MoAI dynamic content (로컬 프로젝트만 무시, but package templates are tracked)
 .moai/logs/
 .moai/temp/
+.moai/cache/
 .moai/*.tmp
 .moai/reports/*.tmp
 .moai/reports/*-draft.*
@@ -88,3 +91,7 @@ docs/out/
 .venv_issue43_py313
 
 /generated/prisma
+
+# Prisma development database
+prisma/dev.db
+prisma/dev.db-journal
