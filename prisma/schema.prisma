@@ -7,11 +7,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// @TEST-FOLDER-CREATE @API-POST-FOLDERS
+model Folder {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  parentId    String?   // Future nested folder support (MVP unused)
+  wordSets    WordSet[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([parentId])
+}
+
 model WordSet {
   id          String   @id @default(cuid())
   name        String
   description String?
-  folderId    String?  // Future folder feature support
+  folderId    String?
+  folder      Folder?  @relation(fields: [folderId], references: [id], onDelete: SetNull)
   words       Word[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
