@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+// @API-POST-WORDSETS (extended with folderId support)
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -27,13 +28,35 @@ export async function POST(request: Request) {
       );
     }
 
+    // Validate folderId if provided
+    if (body.folderId) {
+      const folder = await prisma.folder.findUnique({
+        where: { id: body.folderId },
+      });
+      if (!folder) {
+        return NextResponse.json(
+          { error: "Folder not found" },
+          { status: 400 }
+        );
+      }
+    }
+
     // Create wordset
     const wordset = await prisma.wordSet.create({
       data: {
         name: body.name,
         description: body.description || null,
+        folderId: body.folderId || null,
       },
-      include: { words: true },
+      include: {
+        words: true,
+        folder: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
     });
 
     return NextResponse.json(wordset, { status: 201 });
@@ -46,6 +69,7 @@ export async function POST(request: Request) {
   }
 }
 
+// @API-GET-WORDSETS (extended with folder info)
 export async function GET() {
   try {
     const wordsets = await prisma.wordSet.findMany({
@@ -53,6 +77,12 @@ export async function GET() {
       include: {
         _count: {
           select: { words: true },
+        },
+        folder: {
+          select: {
+            id: true,
+            name: true,
+          },
         },
       },
     });
