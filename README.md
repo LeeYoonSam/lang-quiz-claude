@@ -40,6 +40,15 @@ Visit `http://localhost:3000` in your browser.
 - Organize words by sets/categories
 - Track word counts per set
 - Timestamps for creation and modification
+- **Folder organization system** (SPEC-FOLDER-001) - Organize word sets into folders
+
+### Folder Management (NEW - SPEC-FOLDER-001)
+- Create, read, update, and delete folders
+- Assign word sets to folders
+- Filter word sets by folder
+- Folder statistics (count of word sets per folder)
+- Safe deletion with Nullify policy (word sets moved to root, not deleted)
+- Support for unlimited folder count
 
 ### Word Management
 - Add words to word sets
@@ -52,9 +61,11 @@ Visit `http://localhost:3000` in your browser.
 - Real-time data updates with TanStack Query
 - Optimistic UI updates
 - Clear error messages and validation
+- Intuitive folder UI similar to file systems
 
 ### Data Integrity
 - Cascade delete for related records
+- Nullify deletion policy for folders (preserves data)
 - Input validation on all operations
 - Type-safe with TypeScript
 - Database migrations for schema versioning
@@ -64,13 +75,23 @@ Visit `http://localhost:3000` in your browser.
 ```
 lang-quiz-claude/
 ├── app/                    # Next.js app directory
-│   ├── api/               # API routes
+│   ├── api/
+│   │   ├── folders/       # Folder API routes (NEW - SPEC-FOLDER-001)
+│   │   └── wordsets/      # WordSet API routes
+│   ├── folders/           # Folder pages (NEW - SPEC-FOLDER-001)
 │   ├── wordsets/          # WordSet pages
+│   ├── components/
+│   │   ├── folders/       # Folder UI components (NEW)
+│   │   └── ...
 │   └── layout.tsx         # Root layout
 ├── lib/                   # Utility functions and Prisma client
 ├── hooks/                 # Custom React hooks (TanStack Query)
 ├── prisma/                # Database schema and migrations
 ├── __tests__/             # Unit tests
+│   ├── api/
+│   │   ├── folders.test.ts         # Folder CRUD tests
+│   │   ├── wordsets-folder.test.ts # Folder-WordSet integration tests
+│   │   └── ...
 ├── e2e/                   # End-to-end tests
 └── public/                # Static assets
 ```
@@ -134,11 +155,11 @@ npm run prisma:seed       # Seed database with test data
 
 ## API Documentation
 
-### Word Set Endpoints
+### Folder Endpoints (NEW - SPEC-FOLDER-001)
 
-#### Create Word Set
+#### Create Folder
 ```
-POST /api/wordsets
+POST /api/folders
 Content-Type: application/json
 
 {
@@ -148,17 +169,130 @@ Content-Type: application/json
 
 Response: 201 Created
 {
+  "id": "clx5f6g7h8i9j0k1l2m3",
+  "name": "TOEFL Words",
+  "description": "Essential TOEFL vocabulary",
+  "parentId": null,
+  "createdAt": "2025-11-25T10:00:00.000Z",
+  "updatedAt": "2025-11-25T10:00:00.000Z",
+  "_count": {
+    "wordSets": 0
+  }
+}
+```
+
+#### List Folders (with statistics)
+```
+GET /api/folders
+
+Response: 200 OK
+[
+  {
+    "id": "clx5f6g7h8i9j0k1l2m3",
+    "name": "TOEFL Words",
+    "description": "Essential TOEFL vocabulary",
+    "parentId": null,
+    "createdAt": "2025-11-25T10:00:00.000Z",
+    "updatedAt": "2025-11-25T10:00:00.000Z",
+    "_count": {
+      "wordSets": 5
+    }
+  }
+]
+```
+
+#### Get Folder Details
+```
+GET /api/folders/[id]
+
+Response: 200 OK
+{
+  "id": "clx5f6g7h8i9j0k1l2m3",
+  "name": "TOEFL Words",
+  "description": "Essential TOEFL vocabulary",
+  "parentId": null,
+  "createdAt": "2025-11-25T10:00:00.000Z",
+  "updatedAt": "2025-11-25T10:00:00.000Z",
+  "_count": {
+    "wordSets": 5
+  }
+}
+```
+
+#### Update Folder
+```
+PUT /api/folders/[id]
+Content-Type: application/json
+
+{
+  "name": "Updated Folder Name",
+  "description": "Updated description"
+}
+
+Response: 200 OK
+```
+
+#### Delete Folder (Nullify Policy)
+```
+DELETE /api/folders/[id]
+
+Response: 200 OK
+{
+  "message": "폴더가 삭제되었습니다.",
+  "movedWordSets": 5
+}
+
+Note: Word sets are moved to root (folderId=null), not deleted
+```
+
+#### Get Word Sets in Folder
+```
+GET /api/folders/[id]/wordsets
+
+Response: 200 OK
+[
+  {
+    "id": "clx1a2b3c4d5e6f7g8h9",
+    "name": "Reading Words",
+    "description": "TOEFL Reading section",
+    "folderId": "clx5f6g7h8i9j0k1l2m3",
+    "wordCount": 50,
+    "createdAt": "2025-11-25T10:05:00.000Z",
+    "updatedAt": "2025-11-25T10:05:00.000Z"
+  }
+]
+```
+
+### Word Set Endpoints (Updated with Folder Support)
+
+#### Create Word Set
+```
+POST /api/wordsets
+Content-Type: application/json
+
+{
+  "name": "TOEFL Words",
+  "description": "Essential TOEFL vocabulary",
+  "folderId": "clx5f6g7h8i9j0k1l2m3"  # Optional - assign to folder
+}
+
+Response: 201 Created
+{
   "id": "clx1a2b3c4d5e6f7g8h9",
   "name": "TOEFL Words",
   "description": "Essential TOEFL vocabulary",
-  "folderId": null,
+  "folderId": "clx5f6g7h8i9j0k1l2m3",
+  "folder": {
+    "id": "clx5f6g7h8i9j0k1l2m3",
+    "name": "TOEFL"
+  },
   "words": [],
   "createdAt": "2025-11-24T10:30:00.000Z",
   "updatedAt": "2025-11-24T10:30:00.000Z"
 }
 ```
 
-#### List Word Sets
+#### List Word Sets (with folder info)
 ```
 GET /api/wordsets
 
@@ -168,7 +302,11 @@ Response: 200 OK
     "id": "clx1a2b3c4d5e6f7g8h9",
     "name": "TOEFL Words",
     "description": "Essential TOEFL vocabulary",
-    "folderId": null,
+    "folderId": "clx5f6g7h8i9j0k1l2m3",
+    "folder": {
+      "id": "clx5f6g7h8i9j0k1l2m3",
+      "name": "TOEFL"
+    },
     "wordCount": 25,
     "createdAt": "2025-11-24T10:30:00.000Z",
     "updatedAt": "2025-11-24T10:30:00.000Z"
@@ -185,7 +323,11 @@ Response: 200 OK
   "id": "clx1a2b3c4d5e6f7g8h9",
   "name": "TOEFL Words",
   "description": "Essential TOEFL vocabulary",
-  "folderId": null,
+  "folderId": "clx5f6g7h8i9j0k1l2m3",
+  "folder": {
+    "id": "clx5f6g7h8i9j0k1l2m3",
+    "name": "TOEFL"
+  },
   "words": [
     {
       "id": "clx2b3c4d5e6f7g8h9i0",
@@ -201,14 +343,15 @@ Response: 200 OK
 }
 ```
 
-#### Update Word Set
+#### Update Word Set (with folder support)
 ```
 PUT /api/wordsets/[id]
 Content-Type: application/json
 
 {
   "name": "Updated Name",
-  "description": "Updated description"
+  "description": "Updated description",
+  "folderId": "clx5f6g7h8i9j0k1l2m3"  # Optional - change folder or set to null
 }
 
 Response: 200 OK
@@ -293,11 +436,22 @@ NODE_ENV="development"
 
 ## Database Schema
 
-### WordSet Table
+### Folder Table (NEW - SPEC-FOLDER-001)
+- `id` (String, Primary Key) - Unique identifier
+- `name` (String) - Folder name (max 100 characters)
+- `description` (String, Optional) - Description (max 500 characters)
+- `parentId` (String, Optional) - Future nested folder support
+- `wordSets` (One-to-Many) - Word sets in this folder
+- `createdAt` (DateTime) - Creation timestamp
+- `updatedAt` (DateTime) - Last update timestamp
+
+### WordSet Table (Updated with Folder Support)
 - `id` (String, Primary Key) - Unique identifier
 - `name` (String) - Word set name
 - `description` (String, Optional) - Description
-- `folderId` (String, Optional) - Future folder support
+- `folderId` (String, Optional) - Reference to Folder (SetNull on delete)
+- `folder` (Many-to-One) - Folder relationship
+- `words` (One-to-Many) - Words in this set
 - `createdAt` (DateTime) - Creation timestamp
 - `updatedAt` (DateTime) - Last update timestamp
 
@@ -306,8 +460,17 @@ NODE_ENV="development"
 - `text` (String) - Word/English term
 - `meaning` (String) - Meaning/Korean translation
 - `wordSetId` (String, Foreign Key) - Reference to WordSet
+- `wordSet` (Many-to-One) - Word set relationship
 - `createdAt` (DateTime) - Creation timestamp
 - `updatedAt` (DateTime) - Last update timestamp
+
+### Relationships
+- **Folder → WordSet** (One-to-Many): One folder can contain many word sets
+- **WordSet → Word** (One-to-Many): One word set can contain many words
+- **WordSet → Folder** (Many-to-One): Multiple word sets can belong to one folder
+- **Deletion Policy**:
+  - Folder deleted → Word sets moved to root (folderId = null, SetNull)
+  - Word set deleted → Words cascade deleted (Cascade)
 
 ## Development Guidelines
 
@@ -434,11 +597,47 @@ For issues and questions:
 3. Include error messages and reproduction steps
 4. Attach relevant code snippets
 
+## Recent Changes (SPEC-FOLDER-001)
+
+### Completed Features
+- [x] Folder management system (CRUD)
+- [x] Folder-WordSet relationships
+- [x] Safe deletion with Nullify policy
+- [x] Folder statistics (count of word sets)
+- [x] Root area support (folderId=null)
+- [x] Full backward compatibility with SPEC-WORDSET-001
+
+### Added API Endpoints
+- `POST /api/folders` - Create folder
+- `GET /api/folders` - List folders with stats
+- `GET /api/folders/:id` - Get folder details
+- `PUT /api/folders/:id` - Update folder
+- `DELETE /api/folders/:id` - Delete folder (Nullify)
+- `GET /api/folders/:id/wordsets` - Get folder word sets
+
+### Enhanced API Endpoints
+- `POST /api/wordsets` - Now supports `folderId` parameter
+- `PUT /api/wordsets/:id` - Now supports `folderId` update
+- `GET /api/wordsets` - Now includes folder information
+
+### Added UI Components
+- `FolderList` - Display folder grid with statistics
+- `FolderCard` - Individual folder card
+- `FolderForm` - Create/edit folder form
+- `FolderDetail` - Folder detail page
+- `FolderSelector` - Dropdown for assigning folders to wordsets
+
+### Test Coverage
+- **60 unit tests** covering all folder operations
+- **Full backward compatibility** with SPEC-WORDSET-001
+- **100% API coverage** for folder endpoints
+- **Integration tests** for folder-wordset relationships
+
 ## Future Enhancements
 
 - [ ] User authentication and authorization
 - [ ] Word set sharing and collaboration
-- [ ] Folder organization system
+- [ ] Nested folder structure (use `parentId` field)
 - [ ] Advanced search and filtering
 - [ ] Word pronunciation with audio
 - [ ] Spaced repetition algorithm
@@ -446,6 +645,8 @@ For issues and questions:
 - [ ] Offline support with PWA
 - [ ] Import/export functionality
 - [ ] Analytics and progress tracking
+- [ ] Folder color tags
+- [ ] Drag and drop folder/wordset organization
 
 ---
 
