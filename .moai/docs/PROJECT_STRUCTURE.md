@@ -1,9 +1,9 @@
 ---
 title: 프로젝트 구조
-description: Word Set Management System의 디렉토리 구조와 파일 조직
-version: 0.1.0
-spec: SPEC-WORDSET-001
-lastUpdated: 2025-11-25
+description: Lang Quiz 애플리케이션의 디렉토리 구조와 파일 조직 (Word Set, Folder, UI Design System)
+version: 0.2.0
+spec: [SPEC-WORDSET-001, SPEC-FOLDER-001, SPEC-UI-001]
+lastUpdated: 2025-11-26
 maintainer: "@user"
 ---
 
@@ -42,7 +42,9 @@ lang-quiz-claude/
 ├── lib/                           # 유틸리티 및 설정
 │   ├── prisma.ts                 # Prisma Client 싱글톤
 │   ├── utils.ts                  # 헬퍼 함수
-│   └── validators.ts             # 입력 검증 스키마
+│   ├── validators.ts             # 입력 검증 스키마
+│   └── utils/                    # UI 유틸리티 (SPEC-UI-001)
+│       └── cn.ts                 # 클래스 이름 병합 함수 (clsx + tailwind-merge)
 │
 ├── hooks/                         # 커스텀 React Hooks
 │   ├── useWordSets.ts            # Word Set 관련 훅 (React Query)
@@ -50,6 +52,18 @@ lang-quiz-claude/
 │   └── useLocalStorage.ts        # 로컬 스토리지 훅
 │
 ├── components/                    # 재사용 가능한 React 컴포넌트
+│   ├── ui/                       # UI 컴포넌트 라이브러리 (SPEC-UI-001)
+│   │   ├── Button.tsx            # 버튼 컴포넌트 (primary, secondary, outline, ghost)
+│   │   ├── Card.tsx              # 카드 컴포넌트 (default, interactive)
+│   │   ├── Input.tsx             # 입력 필드 컴포넌트 (라벨, 에러, 헬퍼 텍스트)
+│   │   ├── Badge.tsx             # 배지 컴포넌트 (상태 표시)
+│   │   ├── Skeleton.tsx          # 스켈레톤 로딩 컴포넌트
+│   │   └── index.ts              # UI 컴포넌트 통합 내보내기
+│   ├── folders/                  # 폴더 기능 컴포넌트 (SPEC-FOLDER-001)
+│   │   ├── FolderCard.tsx        # 폴더 카드
+│   │   ├── FolderForm.tsx        # 폴더 생성/수정 폼
+│   │   ├── FolderList.tsx        # 폴더 목록
+│   │   └── FolderSelector.tsx    # 폴더 선택 드롭다운
 │   ├── WordSetList.tsx           # Word Set 목록 컴포넌트
 │   ├── WordSetDetail.tsx         # Word Set 상세 컴포넌트
 │   ├── WordSetForm.tsx           # Word Set 생성/수정 폼
@@ -67,12 +81,24 @@ lang-quiz-claude/
 ├── __tests__/                     # 단위 테스트
 │   ├── api/                      # API 테스트
 │   │   ├── wordsets.test.ts
-│   │   └── words.test.ts
+│   │   ├── folders.test.ts
+│   │   ├── folders-http.test.ts
+│   │   └── wordsets-folder.test.ts
 │   ├── components/               # 컴포넌트 테스트
+│   │   ├── ui/                   # UI 컴포넌트 테스트 (SPEC-UI-001)
+│   │   │   ├── Button.test.tsx   # 20개 테스트 ✅
+│   │   │   ├── Card.test.tsx     # 16개 테스트 ✅
+│   │   │   ├── Input.test.tsx    # 13개 테스트 ✅
+│   │   │   ├── Badge.test.tsx    # 8개 테스트 ✅
+│   │   │   └── Skeleton.test.tsx # 14개 테스트 ✅
 │   │   ├── WordSetForm.test.tsx
 │   │   └── WordList.test.tsx
+│   ├── config/                   # 설정 테스트
+│   │   └── tailwind-theme.test.ts # 13개 테스트 (Tailwind 토큰) ✅
 │   └── lib/                      # 유틸리티 테스트
-│       └── validators.test.ts
+│       ├── validators.test.ts
+│       └── utils/
+│           └── cn.test.ts        # 9개 테스트 (클래스 병합) ✅
 │
 ├── e2e/                          # End-to-End 테스트 (Playwright)
 │   ├── wordset.spec.ts           # Word Set 기능 E2E 테스트
@@ -248,6 +274,44 @@ export function useWordSets() {
 
 **목적**: 재사용 가능한 UI 컴포넌트
 
+#### UI 컴포넌트 라이브러리 (SPEC-UI-001)
+
+```
+components/ui/
+├── Button.tsx          # 버튼 (variants: primary, secondary, outline, ghost)
+├── Card.tsx            # 카드 (variants: default, interactive)
+├── Input.tsx           # 입력 필드 (라벨, 에러, 헬퍼 텍스트)
+├── Badge.tsx           # 배지 (상태 표시)
+├── Skeleton.tsx        # 스켈레톤 로딩
+└── index.ts            # 통합 내보내기
+```
+
+**특징**:
+- 디자인 토큰 기반 (Tailwind CSS)
+- TypeScript 완벽 지원
+- 접근성 준수 (WCAG 2.1 AA)
+- 100% 테스트 커버리지
+- 성능 최적화 (forwardRef, React.memo)
+
+**테스트**:
+- Button: 20개 테스트 ✅
+- Card: 16개 테스트 ✅
+- Input: 13개 테스트 ✅
+- Badge: 8개 테스트 ✅
+- Skeleton: 14개 테스트 ✅
+
+#### 폴더 기능 컴포넌트 (SPEC-FOLDER-001)
+
+```
+components/folders/
+├── FolderCard.tsx      # 폴더 카드
+├── FolderForm.tsx      # 폴더 생성/수정 폼
+├── FolderList.tsx      # 폴더 목록
+└── FolderSelector.tsx  # 폴더 선택 드롭다운
+```
+
+#### 비즈니스 로직 컴포넌트
+
 ```
 components/
 ├── WordSetList.tsx      # 세트 목록 그리드
@@ -262,8 +326,9 @@ components/
 **설계 원칙**:
 - 단일 책임 (Single Responsibility)
 - Props로 데이터 및 콜백 받음
-- 스타일은 Tailwind CSS
+- 스타일은 Tailwind CSS 또는 UI 컴포넌트 조합
 - 접근성 고려 (ARIA)
+- TypeScript 타입 안전성
 
 ---
 
@@ -508,5 +573,17 @@ lang-quiz-claude/
 
 ---
 
-**마지막 업데이트**: 2025-11-25
-**SPEC 참조**: SPEC-WORDSET-001 (v0.1.0)
+---
+
+## SPEC 참조
+
+| SPEC | 상태 | 설명 | 파일 |
+|------|------|------|------|
+| **SPEC-WORDSET-001** | ✅ 완료 | Word Set 관리 시스템 | `app/api/wordsets`, `app/wordsets` |
+| **SPEC-FOLDER-001** | ✅ 완료 | 폴더 기능 | `app/api/folders`, `app/folders`, `components/folders` |
+| **SPEC-UI-001** | ✅ 완료 | 디자인 시스템 및 UI 개선 | `components/ui`, `tailwind.config.ts`, `app/lib/utils/cn.ts` |
+
+---
+
+**마지막 업데이트**: 2025-11-26 (SPEC-UI-001 Living Document 동기화)
+**유지보수자**: @user
