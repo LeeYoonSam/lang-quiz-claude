@@ -3,6 +3,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { FolderCard } from "./FolderCard";
 import Link from "next/link";
+import { Button } from "@/app/components/ui/Button";
+import { Skeleton } from "@/app/components/ui/Skeleton";
 
 // @UI-FOLDER-LIST
 export function FolderList() {
@@ -17,31 +19,34 @@ export function FolderList() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-8">
-        <div className="text-gray-500">로드 중...</div>
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} variant="card" />
+          ))}
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-        폴더 목록을 불러올 수 없습니다.
+      <div className="bg-error-50 border border-error-200 text-error-700 px-6 py-4 rounded-lg">
+        <p className="font-medium">폴더 목록을 불러올 수 없습니다</p>
+        <p className="text-sm mt-1">{(error as Error).message}</p>
       </div>
     );
   }
 
   if (!folders || folders.length === 0) {
     return (
-      <div className="text-center py-8">
-        <p className="text-gray-500 mb-4">
-          폴더를 만들어 단어 세트를 정리하세요
-        </p>
-        <Link
-          href="/folders/new"
-          className="inline-block bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-        >
-          새 폴더 만들기
+      <div className="text-center py-16">
+        <h2 className="text-2xl font-semibold text-neutral-900 mb-2">아직 폴더가 없습니다</h2>
+        <p className="text-neutral-600 mb-6">폴더를 만들어 단어 세트를 정리하세요</p>
+        <Link href="/folders/new">
+          <Button variant="primary" size="lg">
+            새 폴더 만들기
+          </Button>
         </Link>
       </div>
     );
@@ -49,16 +54,13 @@ export function FolderList() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <Link
-          href="/folders/new"
-          className="inline-block bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 mb-6"
-        >
+      <Link href="/folders/new">
+        <Button variant="primary" size="md">
           새 폴더 만들기
-        </Link>
-      </div>
+        </Button>
+      </Link>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {folders.map((folder: any) => (
           <FolderCard
             key={folder.id}
