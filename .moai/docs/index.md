@@ -1,9 +1,9 @@
 ---
 title: Living Documents 인덱스
-description: Word Set Management System의 모든 Living Documents 목록 및 메타데이터
-version: 0.1.0
-spec: SPEC-WORDSET-001
-lastUpdated: 2025-11-25
+description: Lang Quiz 애플리케이션의 모든 Living Documents 목록 및 메타데이터 (플립 카드 학습 시스템 추가)
+version: 0.2.0
+spec: [SPEC-WORDSET-001, SPEC-FOLDER-001, SPEC-UI-001, SPEC-LEARN-001]
+lastUpdated: 2025-11-27
 maintainer: "@user"
 ---
 
@@ -15,7 +15,7 @@ maintainer: "@user"
 
 ---
 
-## 문서 목록 (6개 + 계획)
+## 문서 목록 (9개)
 
 ### 1. API_REFERENCE.md
 
@@ -225,16 +225,189 @@ maintainer: "@user"
 - `@CHANGELOG-FEATURE`
 - `@CHANGELOG-BUGFIX`
 
-**마지막 업데이트**: 2025-11-25
+**마지막 업데이트**: 2025-11-27
 **유지보수자**: @user
-**버전**: 0.2.0
-**최신 버전**: 0.2.0 (SPEC-FOLDER-001 추가)
+**버전**: 0.3.0
+**최신 버전**: 0.3.0 (SPEC-LEARN-001 추가)
 
 **링크**: [CHANGELOG.md](./CHANGELOG.md)
 
 ---
 
-### 5. index.md (현재 파일)
+### 5. COMPONENTS_GUIDE.md
+
+**목적**: UI 컴포넌트 및 학습 컴포넌트 라이브러리 가이드
+
+**작성 이유**:
+- UI 컴포넌트 사용법
+- 학습 컴포넌트 통합
+- 디자인 시스템 설명
+
+**주요 섹션**:
+- UI 컴포넌트 (Button, Card, Input, Badge, Skeleton)
+- 학습 컴포넌트 (FlipCard, LearnNavigation, LearnProgress, LearnComplete)
+- Framer Motion 애니메이션 가이드
+- Web Speech API 통합
+- 베스트 프랙티스
+
+**문서 사양**:
+- 라인 수: ~600줄 (확장)
+- 섹션 수: 12개
+- 코드 예시: 30개 이상
+- 컴포넌트: 9개 (5개 UI + 4개 학습)
+
+**사용자**:
+- 프론트엔드 개발자
+- 컴포넌트 라이브러리 유지보수자
+
+**TAG 매핑**:
+- `@UI-COMPONENTS`
+- `@LEARN-COMPONENTS`
+- `@LEARN-UI`
+
+**마지막 업데이트**: 2025-11-27
+**유지보수자**: @user
+**버전**: 0.2.0
+
+**링크**: [COMPONENTS_GUIDE.md](./COMPONENTS_GUIDE.md)
+
+---
+
+### 6. LEARN_FEATURES.md (신규)
+
+**목적**: 플립 카드 학습 시스템의 사용자 기능 및 워크플로우 설명
+
+**작성 이유**:
+- 학습 기능 소개
+- 사용자 워크플로우 설명
+- API 개요 제공
+
+**주요 섹션**:
+- 학습 시스템 개요
+- 주요 기능 (3D 플립, TTS, 키보드, 진행률, 세션 저장, 모드)
+- 학습 모드 (순차/랜덤)
+- 사용자 인터페이스
+- 사용 시나리오
+- API 및 훅 개요
+- 키보드 단축키
+- 베스트 프랙티스
+
+**문서 사양**:
+- 라인 수: ~350줄
+- 섹션 수: 9개
+- 코드 예시: 15개
+- 다이어그램: 3개
+
+**사용자**:
+- 프론트엔드 개발자
+- 기능 구현 담당자
+- 최종 사용자
+
+**TAG 매핑**:
+- `@LEARN-FEATURES`
+- `@LEARN-UI`
+- `@LEARN-HOOKS`
+
+**마지막 업데이트**: 2025-11-27
+**유지보수자**: @user
+**버전**: 0.1.0
+
+**링크**: [LEARN_FEATURES.md](./LEARN_FEATURES.md)
+
+---
+
+### 7. LEARN_COMPONENTS_API.md (신규)
+
+**목적**: 학습 컴포넌트 및 Hooks의 상세 API 레퍼런스
+
+**작성 이유**:
+- 컴포넌트 API 명세
+- Hooks 인터페이스 정의
+- 유틸리티 함수 문서화
+
+**주요 섹션**:
+- 컴포넌트 개요
+- FlipCard 컴포넌트 (Props, 사용법, 애니메이션)
+- LearnNavigation 컴포넌트
+- LearnProgress 컴포넌트
+- LearnComplete 컴포넌트
+- useLearnSession Hook
+- useSpeech Hook
+- useKeyboard Hook
+- 유틸리티 함수 (sessionStorage, shuffle)
+- 타입 정의
+- 완전한 통합 예시
+
+**문서 사양**:
+- 라인 수: ~400줄
+- 섹션 수: 10개
+- 코드 예시: 25개 이상
+- 표: 12개
+
+**사용자**:
+- 백엔드 개발자
+- API 통합 담당자
+- 프론트엔드 개발자
+
+**TAG 매핑**:
+- `@LEARN-COMPONENTS`
+- `@LEARN-HOOKS`
+- `@LEARN-UTILS`
+
+**마지막 업데이트**: 2025-11-27
+**유지보수자**: @user
+**버전**: 0.1.0
+
+**링크**: [LEARN_COMPONENTS_API.md](./LEARN_COMPONENTS_API.md)
+
+---
+
+### 8. LEARN_SESSION_MANAGEMENT.md (신규)
+
+**목적**: 학습 세션 상태 관리, 데이터 구조, 저장소 메커니즘 상세 설명
+
+**작성 이유**:
+- 세션 관리 아키텍처 이해
+- 데이터 구조 상세 설명
+- 저장소 메커니즘 설명
+
+**주요 섹션**:
+- 세션 관리 개요
+- 세션 데이터 구조 (LearnSession 인터페이스)
+- useLearnSession Hook 상세
+- sessionStorage 유틸리티
+- 세션 생명주기
+- 데이터 처리 흐름
+- 에러 처리 및 복구 전략
+- 성능 최적화
+- 보안 고려사항
+- 모니터링 및 디버깅
+
+**문서 사양**:
+- 라인 수: ~320줄
+- 섹션 수: 9개
+- 코드 예시: 20개 이상
+- 다이어그램: 5개
+
+**사용자**:
+- 백엔드 개발자
+- 데이터 모델링 담당자
+- DevOps 엔지니어
+
+**TAG 매핑**:
+- `@LEARN-SESSION`
+- `@LEARN-STORAGE`
+- `@LEARN-DATA`
+
+**마지막 업데이트**: 2025-11-27
+**유지보수자**: @user
+**버전**: 0.1.0
+
+**링크**: [LEARN_SESSION_MANAGEMENT.md](./LEARN_SESSION_MANAGEMENT.md)
+
+---
+
+### 9. index.md (현재 파일)
 
 **목적**: 모든 Living Documents의 중앙 인덱스
 
@@ -272,18 +445,32 @@ maintainer: "@user"
 ## 문서 관계도
 
 ```
-index.md (인덱스)
-    ├─→ API_REFERENCE.md (API 명세)
+index.md (중앙 인덱스)
+    │
+    ├─→ API_REFERENCE.md (REST API 명세)
     │   └─→ 백엔드 개발자, API 클라이언트
     │
-    ├─→ PROJECT_STRUCTURE.md (구조 설명)
+    ├─→ PROJECT_STRUCTURE.md (디렉토리 구조)
     │   └─→ 신입 개발자, 아키텍처 검토
     │
-    ├─→ DATABASE_SCHEMA.md (DB 설계)
+    ├─→ DATABASE_SCHEMA.md (데이터베이스 설계)
     │   └─→ DB 엔지니어, 백엔드 개발자
     │
-    └─→ CHANGELOG.md (변경 이력)
-        └─→ PM, 릴리스 엔지니어, 사용자
+    ├─→ CHANGELOG.md (버전 이력)
+    │   └─→ PM, 릴리스 엔지니어, 사용자
+    │
+    ├─→ COMPONENTS_GUIDE.md (UI & 학습 컴포넌트)
+    │   └─→ 프론트엔드 개발자, 컴포넌트 유지보수
+    │
+    └─→ 학습 시스템 문서
+        ├─→ LEARN_FEATURES.md (기능 설명)
+        │   └─→ 프론트엔드 개발자, 기능 구현자
+        │
+        ├─→ LEARN_COMPONENTS_API.md (API 레퍼런스)
+        │   └─→ 백엔드 개발자, API 통합
+        │
+        └─→ LEARN_SESSION_MANAGEMENT.md (세션 관리)
+            └─→ 데이터 모델링, 아키텍처 검토
 ```
 
 ---
@@ -299,7 +486,7 @@ index.md (인덱스)
 | Acceptance Criteria | PROJECT_STRUCTURE.md | @PROJECT-STRUCTURE |
 | Traceability | CHANGELOG.md | @RELEASE-V0.1.0 |
 
-### SPEC-FOLDER-001 (v1.0.0) - NEW
+### SPEC-FOLDER-001 (v1.0.0)
 
 | SPEC 섹션 | Living Document | 대응 TAG |
 |---------|----------------|---------|
@@ -307,6 +494,17 @@ index.md (인덱스)
 | Specifications | API_REFERENCE.md, DATABASE_SCHEMA.md | @API-*, @DB-FOLDER-* |
 | Acceptance Criteria | CHANGELOG.md (v0.2.0) | @RELEASE-V0.2.0 |
 | Traceability | TAG_MAPPING.md (계획) | @SPEC-FOLDER-001 |
+
+### SPEC-LEARN-001 (v0.1.0) - NEW
+
+| SPEC 섹션 | Living Document | 대응 TAG |
+|---------|----------------|---------|
+| Features | LEARN_FEATURES.md | @LEARN-FEATURES |
+| Components | LEARN_COMPONENTS_API.md | @LEARN-COMPONENTS, @LEARN-UI |
+| Hooks | LEARN_COMPONENTS_API.md | @LEARN-HOOKS |
+| Session Management | LEARN_SESSION_MANAGEMENT.md | @LEARN-SESSION, @LEARN-STORAGE |
+| UI | COMPONENTS_GUIDE.md | @LEARN-UI |
+| Traceability | CHANGELOG.md (v0.3.0) | @RELEASE-V0.3.0 |
 
 ---
 
@@ -451,16 +649,20 @@ index.md (인덱스)
 
 ## 문서 통계
 
-### v0.2.0 (2025-11-25) - SPEC-FOLDER-001 추가
+### v0.3.0 (2025-11-27) - SPEC-LEARN-001 추가
 
 | 문서 | 라인 수 | 섹션 | 예시 | 표 |
 |------|--------|------|------|-----|
 | API_REFERENCE.md | ~850 | 14 | 45 | 12 |
-| PROJECT_STRUCTURE.md | 440 | 10 | 5 | 4 |
+| PROJECT_STRUCTURE.md | 460 | 10 | 5 | 4 |
 | DATABASE_SCHEMA.md | 520 | 15 | 15 | 8 |
-| CHANGELOG.md | ~500 | 13 | 3 | 4 |
-| index.md | ~600 | 8 | 2 | 7 |
-| **합계** | **~3,310** | **60** | **70** | **35** |
+| CHANGELOG.md | ~580 | 14 | 3 | 5 |
+| COMPONENTS_GUIDE.md | ~600 | 12 | 30 | 6 |
+| LEARN_FEATURES.md | ~350 | 9 | 15 | 3 |
+| LEARN_COMPONENTS_API.md | ~400 | 10 | 25 | 12 |
+| LEARN_SESSION_MANAGEMENT.md | ~320 | 9 | 20 | 5 |
+| index.md | ~850 | 10 | 2 | 8 |
+| **합계** | **~4,930** | **103** | **160** | **63** |
 
 ### v0.1.0 (2025-11-25) - 초기 버전
 

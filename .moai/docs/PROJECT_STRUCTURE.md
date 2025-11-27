@@ -1,9 +1,9 @@
 ---
 title: 프로젝트 구조
-description: Lang Quiz 애플리케이션의 디렉토리 구조와 파일 조직 (Word Set, Folder, UI Design System)
-version: 0.2.0
-spec: [SPEC-WORDSET-001, SPEC-FOLDER-001, SPEC-UI-001]
-lastUpdated: 2025-11-26
+description: Lang Quiz 애플리케이션의 디렉토리 구조와 파일 조직 (Word Set, Folder, UI Design System, Learn System)
+version: 0.3.0
+spec: [SPEC-WORDSET-001, SPEC-FOLDER-001, SPEC-UI-001, SPEC-LEARN-001]
+lastUpdated: 2025-11-27
 maintainer: "@user"
 ---
 
@@ -43,13 +43,26 @@ lang-quiz-claude/
 │   ├── prisma.ts                 # Prisma Client 싱글톤
 │   ├── utils.ts                  # 헬퍼 함수
 │   ├── validators.ts             # 입력 검증 스키마
-│   └── utils/                    # UI 유틸리티 (SPEC-UI-001)
-│       └── cn.ts                 # 클래스 이름 병합 함수 (clsx + tailwind-merge)
+│   ├── utils/                    # UI 유틸리티 (SPEC-UI-001)
+│   │   └── cn.ts                 # 클래스 이름 병합 함수 (clsx + tailwind-merge)
+│   └── learn/                    # 학습 유틸리티 (SPEC-LEARN-001)
+│       ├── sessionStorage.ts     # 세션 저장/로드/삭제
+│       ├── shuffle.ts            # Fisher-Yates 셔플 알고리즘
+│       └── __tests__/            # 유틸리티 테스트 (2개)
+│           ├── sessionStorage.test.ts
+│           └── shuffle.test.ts
 │
 ├── hooks/                         # 커스텀 React Hooks
 │   ├── useWordSets.ts            # Word Set 관련 훅 (React Query)
 │   ├── useWords.ts               # Word 관련 훅 (React Query)
-│   └── useLocalStorage.ts        # 로컬 스토리지 훅
+│   ├── useLocalStorage.ts        # 로컬 스토리지 훅
+│   ├── useLearnSession.ts        # 학습 세션 상태 관리 (SPEC-LEARN-001)
+│   ├── useSpeech.ts              # Web Speech API TTS (SPEC-LEARN-001)
+│   ├── useKeyboard.ts            # 키보드 단축키 (SPEC-LEARN-001)
+│   └── __tests__/                # 훅 테스트 (3개)
+│       ├── useLearnSession.test.ts
+│       ├── useSpeech.test.ts
+│       └── useKeyboard.test.ts
 │
 ├── components/                    # 재사용 가능한 React 컴포넌트
 │   ├── ui/                       # UI 컴포넌트 라이브러리 (SPEC-UI-001)
@@ -59,6 +72,16 @@ lang-quiz-claude/
 │   │   ├── Badge.tsx             # 배지 컴포넌트 (상태 표시)
 │   │   ├── Skeleton.tsx          # 스켈레톤 로딩 컴포넌트
 │   │   └── index.ts              # UI 컴포넌트 통합 내보내기
+│   ├── learn/                    # 플립 카드 학습 컴포넌트 (SPEC-LEARN-001)
+│   │   ├── FlipCard.tsx          # 3D 플립 카드 (Framer Motion 애니메이션)
+│   │   ├── LearnNavigation.tsx   # 이전/다음/완료 네비게이션
+│   │   ├── LearnProgress.tsx     # 진행률 표시 및 프로그레스 바
+│   │   ├── LearnComplete.tsx     # 학습 완료 화면 및 통계
+│   │   └── __tests__/            # 학습 컴포넌트 테스트 (4개)
+│   │       ├── FlipCard.test.tsx
+│   │       ├── LearnNavigation.test.tsx
+│   │       ├── LearnProgress.test.tsx
+│   │       └── LearnComplete.test.tsx
 │   ├── folders/                  # 폴더 기능 컴포넌트 (SPEC-FOLDER-001)
 │   │   ├── FolderCard.tsx        # 폴더 카드
 │   │   ├── FolderForm.tsx        # 폴더 생성/수정 폼

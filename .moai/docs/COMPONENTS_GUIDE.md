@@ -1,10 +1,10 @@
 ---
 title: UI 컴포넌트 가이드
-description: Lang Quiz 애플리케이션의 재사용 가능한 UI 컴포넌트 라이브러리 완벽 가이드
-version: 0.1.0
-spec: SPEC-UI-001
+description: Lang Quiz 애플리케이션의 재사용 가능한 UI 컴포넌트 및 학습 컴포넌트 라이브러리 완벽 가이드
+version: 0.2.0
+spec: [SPEC-UI-001, SPEC-LEARN-001]
 created: 2025-11-26
-updated: 2025-11-26
+updated: 2025-11-27
 maintainer: "@user"
 ---
 
