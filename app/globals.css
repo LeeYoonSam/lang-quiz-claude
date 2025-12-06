@@ -1,11 +1,226 @@
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+@import url('https://rsms.me/inter/inter.css');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-html {
-  scroll-behavior: smooth;
+@layer base {
+  /* Font Face Declarations with Optimization */
+  @font-face {
+    font-family: 'Pretendard';
+    src: local('Pretendard'),
+      url('/fonts/pretendard-variable.woff2') format('woff2-variations'),
+      url('/fonts/pretendard-variable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: normal;
+    unicode-range: U+0020-007E, U+00A0-00FF, U+0100-017F, U+0180-024F;
+  }
+
+  @font-face {
+    font-family: 'Inter';
+    src: local('Inter'),
+      url('/fonts/inter-variable.woff2') format('woff2-variations'),
+      url('/fonts/inter-variable.woff2') format('woff2');
+    font-weight: 100 900;
+    font-display: swap;
+    font-style: normal;
+    unicode-range: U+0020-007E, U+00A0-00FF, U+0100-017F, U+0180-024F;
+  }
+
+  /* Root Font Configuration */
+  :root {
+    /* Font Family CSS Variables */
+    --font-family-sans: 'Pretendard', 'Inter', system-ui, -apple-system,
+      'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+
+    /* Font Smoothing Variables */
+    --font-smoothing: antialiased;
+    --moz-font-smoothing: grayscale;
+
+    /* Color System CSS Variables - Light Mode */
+    --color-primary: #3b82f6;
+    --color-primary-light: #dbeafe;
+    --color-primary-dark: #1d4ed8;
+    --color-success: #22c55e;
+    --color-success-dark: #0f5a42;
+    --color-warning: #f59e0b;
+    --color-warning-dark: #b45309;
+    --color-error: #ef4444;
+    --color-error-dark: #b91c1c;
+    --color-background: #ffffff;
+    --color-background-alt: #f9fafb;
+    --color-surface: #ffffff;
+    --color-surface-alt: #f3f4f6;
+    --color-text-primary: #111827;
+    --color-text-secondary: #4b5563;
+    --color-text-tertiary: #9ca3af;
+    --color-border-light: #e5e7eb;
+    --color-border: #d1d5db;
+    --color-border-dark: #9ca3af;
+    --color-disabled: #d1d5db;
+    --color-disabled-text: #9ca3af;
+
+    /* Typography Scale Variables */
+    --text-xs-size: 0.75rem;
+    --text-xs-height: 1rem;
+    --text-sm-size: 0.875rem;
+    --text-sm-height: 1.25rem;
+    --text-base-size: 1rem;
+    --text-base-height: 1.5rem;
+    --text-lg-size: 1.125rem;
+    --text-lg-height: 1.75rem;
+    --text-xl-size: 1.25rem;
+    --text-xl-height: 1.75rem;
+    --text-2xl-size: 1.5rem;
+    --text-2xl-height: 2rem;
+    --text-3xl-size: 1.875rem;
+    --text-3xl-height: 2.25rem;
+    --text-4xl-size: 2.25rem;
+    --text-4xl-height: 2.5rem;
+
+    /* Font Weight Variables */
+    --font-light: 300;
+    --font-normal: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+    --font-extrabold: 800;
+
+    /* Letter Spacing for Visual Hierarchy */
+    --letter-spacing-tight: -0.02em;
+    --letter-spacing-normal: 0;
+    --letter-spacing-wide: 0.02em;
+    --letter-spacing-wider: 0.05em;
+  }
+
+  /* HTML Font Configuration */
+  html {
+    scroll-behavior: smooth;
+    font-family: var(--font-family-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-feature-settings: 'rlig' 1, 'calt' 1;
+    text-rendering: optimizeLegibility;
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  /* Body Font Configuration */
+  body {
+    background-color: #f9fafb;
+    font-family: inherit;
+    font-weight: var(--font-normal);
+    font-size: var(--text-base-size);
+    line-height: var(--text-base-height);
+    color: #111827;
+  }
+
+  /* Ensure consistent heading font smoothing */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: inherit;
+    font-feature-settings: 'rlig' 1, 'calt' 1, 'liga' 1;
+  }
+
+  /* Input font consistency */
+  input,
+  textarea,
+  button,
+  select {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: inherit;
+  }
+
+  /* Prevent font adjustment in landscape mode (iOS) */
+  @supports (font-size: max(1px)) {
+    body {
+      font-size: max(1rem, 1vmin);
+    }
+  }
+
+  /* Dark Mode Color Variables */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --color-primary: #60a5fa;
+      --color-primary-light: #1d4ed8;
+      --color-primary-dark: #dbeafe;
+      --color-success: #4ade80;
+      --color-success-dark: #dcfce7;
+      --color-warning: #fbbf24;
+      --color-warning-dark: #fef3c7;
+      --color-error: #f87171;
+      --color-error-dark: #fee2e2;
+      --color-background: #030712;
+      --color-background-alt: #111827;
+      --color-surface: #1f2937;
+      --color-surface-alt: #374151;
+      --color-text-primary: #f9fafb;
+      --color-text-secondary: #d1d5db;
+      --color-text-tertiary: #9ca3af;
+      --color-border-light: #374151;
+      --color-border: #4b5563;
+      --color-border-dark: #6b7280;
+      --color-disabled: #374151;
+      --color-disabled-text: #6b7280;
+    }
+  }
+
+  /* Support explicit dark mode class */
+  [data-theme="dark"] {
+    --color-primary: #60a5fa;
+    --color-primary-light: #1d4ed8;
+    --color-primary-dark: #dbeafe;
+    --color-success: #4ade80;
+    --color-success-dark: #dcfce7;
+    --color-warning: #fbbf24;
+    --color-warning-dark: #fef3c7;
+    --color-error: #f87171;
+    --color-error-dark: #fee2e2;
+    --color-background: #030712;
+    --color-background-alt: #111827;
+    --color-surface: #1f2937;
+    --color-surface-alt: #374151;
+    --color-text-primary: #f9fafb;
+    --color-text-secondary: #d1d5db;
+    --color-text-tertiary: #9ca3af;
+    --color-border-light: #374151;
+    --color-border: #4b5563;
+    --color-border-dark: #6b7280;
+    --color-disabled: #374151;
+    --color-disabled-text: #6b7280;
+  }
 }
 
-body {
-  background-color: #f9fafb;
+@layer components {
+  /* Typography utility classes for consistency */
+  .text-display-xl {
+    @apply text-4xl font-bold leading-tight tracking-tight;
+  }
+
+  .text-display-lg {
+    @apply text-3xl font-bold leading-tight tracking-tight;
+  }
+
+  .text-headline {
+    @apply text-2xl font-semibold leading-snug tracking-tight;
+  }
+
+  .text-title {
+    @apply text-xl font-semibold leading-normal;
+  }
+
+  .text-body {
+    @apply text-base font-normal leading-relaxed;
+  }
+
+  .text-label {
+    @apply text-sm font-medium leading-normal;
+  }
+
+  .text-caption {
+    @apply text-xs font-normal leading-tight text-neutral-600;
+  }
 }
