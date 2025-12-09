@@ -7,6 +7,9 @@ import { cn } from "@/app/lib/utils/cn";
 export const metadata: Metadata = {
   title: "Lang Quiz - Word Set Management",
   description: "Learn vocabulary with word sets",
+  icons: {
+    icon: '/favicon.ico',
+  },
 };
 
 export default function RootLayout({
@@ -16,6 +19,26 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
+      <head>
+        {/* Font Preloading for Critical Path */}
+        <link
+          rel="preload"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
+          as="style"
+        />
+        <link
+          rel="preload"
+          href="https://rsms.me/inter/inter.css"
+          as="style"
+        />
+
+        {/* DNS Prefetch for Font CDNs */}
+        <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+        <link rel="dns-prefetch" href="https://rsms.me" />
+
+        {/* Font Display Optimization */}
+        <meta name="font-display" content="swap" />
+      </head>
       <body className={cn(
         "bg-neutral-50",
         "font-sans antialiased"

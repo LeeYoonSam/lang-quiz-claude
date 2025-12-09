@@ -1,9 +1,9 @@
 ---
 id: SPEC-UI-001
-version: 0.1.0
-status: draft
+version: 0.2.0
+status: completed
 created: 2025-11-26
-updated: 2025-11-26
+updated: 2025-12-06
 author: "@user"
 priority: high
 dependencies:
@@ -15,6 +15,7 @@ dependencies:
 
 | 버전  | 날짜       | 작성자 | 변경 내용      |
 | ----- | ---------- | ------ | -------------- |
+| 0.2.0 | 2025-12-06 | @user  | 디자인 시스템 구현 완료 - 174개 테스트 통과, TRUST 5 점수 98/100 |
 | 0.1.0 | 2025-11-26 | @user  | 초기 SPEC 생성 |
 
 ---
