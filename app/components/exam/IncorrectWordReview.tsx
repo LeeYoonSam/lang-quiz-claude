@@ -90,14 +90,13 @@ export function IncorrectWordReview({
                     </div>
 
                     {/* Pronunciation Button */}
-                    {onSpeak && (
-                      <button
-                        onClick={() => onSpeak(item.question.prompt)}
-                        className="px-3 py-1 text-sm bg-blue-100 hover:bg-blue-200 text-blue-600 rounded transition"
-                      >
-                        🔊 다시 듣기
-                      </button>
-                    )}
+                    <button
+                      onClick={() => onSpeak?.(item.question.prompt)}
+                      disabled={!onSpeak}
+                      className="px-3 py-1 text-sm bg-blue-100 hover:bg-blue-200 text-blue-600 rounded transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      🔊 다시 듣기
+                    </button>
                   </li>
                 ))}
               </ul>

@@ -19,15 +19,15 @@ export function ExamProgress({
   answeredCount,
   timeElapsed,
 }: ExamProgressProps) {
-  // Calculate progress percentage
+  // Calculate progress percentage based on answered count
   const progressPercentage = useMemo(() => {
     if (totalQuestions === 0) return 0;
-    return (currentIndex / totalQuestions) * 100;
-  }, [currentIndex, totalQuestions]);
+    return (answeredCount / totalQuestions) * 100;
+  }, [answeredCount, totalQuestions]);
 
   // Format elapsed time (milliseconds to MM:SS)
   const formattedTime = useMemo(() => {
-    if (!timeElapsed) return null;
+    if (timeElapsed === undefined || timeElapsed === null) return null;
     const totalSeconds = Math.floor(timeElapsed / 1000);
     const minutes = Math.floor(totalSeconds / 60);
     const seconds = totalSeconds % 60;
