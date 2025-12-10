@@ -1,8 +1,10 @@
-# SPEC-EXAM-001: 영어 단어 시험 시스템 - 구현 계획 (초안)
+# SPEC-EXAM-001: 영어 단어 시험 시스템 - 구현 계획
 
 **Status**: DRAFT
+**Version**: 1.0.0
 **Created**: 2025-11-27
-**Author**: GOOS
+**Updated**: 2025-12-09
+**Author**: Albert
 
 ---
 
