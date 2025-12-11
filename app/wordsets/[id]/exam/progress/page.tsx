@@ -1,13 +1,15 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useExamSession } from '@/app/hooks/useExamSession';
 import { useExamSpeech } from '@/app/hooks/useExamSpeech';
 import { MultipleChoiceQuestion } from '@/app/components/exam/MultipleChoiceQuestion';
 import { ShortAnswerQuestion } from '@/app/components/exam/ShortAnswerQuestion';
 import { ExamProgress } from '@/app/components/exam/ExamProgress';
+import { wordsToWordItems } from '@/lib/utils/exam';
 import type { WordItem } from '@/lib/utils/exam/types';
+import type { Word } from '@/app/types/learn';
 
 /**
  * Exam Progress Page
@@ -30,14 +32,13 @@ export default function ProgressPage() {
   const params = useParams();
   const wordSetId = params.id as string;
 
-  // Mock word set data (in production, fetch from API)
-  const mockWordSet: WordItem[] = [
-    { id: '1', word: 'apple', meaning: 'A red fruit' },
-    { id: '2', word: 'banana', meaning: 'A yellow fruit' },
-    { id: '3', word: 'cherry', meaning: 'A small red fruit' },
-    { id: '4', word: 'date', meaning: 'A sweet dried fruit' },
-    { id: '5', word: 'elderberry', meaning: 'A dark purple berry' },
-  ];
+  // State for loaded word set data
+  const [wordSet, setWordSet] = useState<WordItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [shortAnswer, setShortAnswer] = useState('');
+  const [showResult, setShowResult] = useState(false);
+  const [isAnswerCorrect, setIsAnswerCorrect] = useState(false);
 
   // Initialize exam session and speech hooks
   const {
@@ -45,19 +46,53 @@ export default function ProgressPage() {
     questions,
     currentIndex,
     direction,
+    answers,
     submitAnswer,
     nextQuestion,
     finishExam,
-  } = useExamSession(wordSetId, mockWordSet);
+  } = useExamSession(wordSetId, wordSet);
 
   const { speak } = useExamSpeech();
 
+  // Load word set data from API
+  useEffect(() => {
+    const loadWordSet = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/wordsets/${wordSetId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch wordset');
+        }
+
+        const data = await response.json();
+        const convertedWords = wordsToWordItems(data.words as Word[]);
+        setWordSet(convertedWords);
+      } catch (err) {
+        console.error('Error loading wordset:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (wordSetId) {
+      loadWordSet();
+    }
+  }, [wordSetId]);
+
   // Auto-redirect if no active exam
   useEffect(() => {
-    if (status !== 'in-progress' || questions.length === 0) {
+    if (!isLoading && (status !== 'in-progress' || questions.length === 0)) {
       router.push('./');
     }
-  }, [status, questions.length, router]);
+  }, [status, questions.length, router, isLoading]);
+
+  // Reset answer state when question changes
+  useEffect(() => {
+    setSelectedAnswer(null);
+    setShortAnswer('');
+    setShowResult(false);
+    setIsAnswerCorrect(false);
+  }, [currentIndex]);
 
   // Speak word for reverse direction
   useEffect(() => {
@@ -67,36 +102,64 @@ export default function ProgressPage() {
       currentIndex < questions.length
     ) {
       const currentQuestion = questions[currentIndex];
-      // Extract word from prompt or use wordId to find word
-      const word = mockWordSet.find(w => w.id === currentQuestion.wordId);
+      const word = wordSet.find(w => w.id === currentQuestion.wordId);
       if (word) {
         speak(word.word, 'en-US');
       }
     }
-  }, [currentIndex, direction, questions, speak]);
+  }, [currentIndex, direction, questions, wordSet, speak]);
 
-  if (status !== 'in-progress' || questions.length === 0) {
-    return null;
-  }
+  const handleSelectAnswer = useCallback((answer: string) => {
+    setSelectedAnswer(answer);
+  }, []);
 
-  const currentQuestion = questions[currentIndex];
-  const isLastQuestion = currentIndex === questions.length - 1;
+  const handleShortAnswerChange = useCallback((answer: string) => {
+    setShortAnswer(answer);
+  }, []);
 
-  /**
-   * Handle answer submission
-   */
-  const handleAnswerSubmit = (answer: string) => {
-    submitAnswer(answer);
+  const handleAnswerSubmit = useCallback(() => {
+    if (status !== 'in-progress' || questions.length === 0) {
+      return;
+    }
+
+    const currentQuestion = questions[currentIndex];
+    const userAnswer = currentQuestion.type === 'multiple-choice'
+      ? selectedAnswer || ''
+      : shortAnswer;
+
+    if (!userAnswer.trim()) {
+      return;
+    }
+
+    // Check if answer is correct
+    const isCorrect = userAnswer.trim().toLowerCase() === currentQuestion.correctAnswer.trim().toLowerCase();
+    setIsAnswerCorrect(isCorrect);
+
+    // Submit answer to session
+    submitAnswer(userAnswer);
+    setShowResult(true);
+  }, [status, questions, currentIndex, selectedAnswer, shortAnswer, submitAnswer]);
+
+  const handleNextQuestion = useCallback(() => {
+    const isLastQuestion = currentIndex === questions.length - 1;
 
     if (isLastQuestion) {
-      // Finish exam and navigate to result page
       finishExam();
       router.push('./result');
     } else {
-      // Move to next question
       nextQuestion();
     }
-  };
+  }, [currentIndex, questions.length, finishExam, nextQuestion, router]);
+
+  if (isLoading || status !== 'in-progress' || questions.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+        <div className="text-lg text-gray-600">Loading...</div>
+      </div>
+    );
+  }
+
+  const currentQuestion = questions[currentIndex];
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50">
@@ -111,12 +174,35 @@ export default function ProgressPage() {
         {currentQuestion.type === 'multiple-choice' ? (
           <MultipleChoiceQuestion
             question={currentQuestion}
-            onSubmit={handleAnswerSubmit}
+            selectedAnswer={selectedAnswer}
+            onSelectAnswer={handleSelectAnswer}
+            showResult={showResult}
+            isCorrect={isAnswerCorrect}
+            disabled={showResult}
+            showPronunciationButton={direction === 'reverse'}
+            onPronounce={() => {
+              const word = wordSet.find(w => w.id === currentQuestion.wordId);
+              if (word) {
+                speak(word.word, 'en-US');
+              }
+            }}
           />
         ) : (
           <ShortAnswerQuestion
             question={currentQuestion}
-            onSubmit={handleAnswerSubmit}
+            userAnswer={shortAnswer}
+            onAnswerChange={handleShortAnswerChange}
+            onSubmit={showResult ? handleNextQuestion : handleAnswerSubmit}
+            showResult={showResult}
+            isCorrect={isAnswerCorrect}
+            disabled={showResult}
+            showPronunciationButton={direction === 'reverse'}
+            onPronounce={() => {
+              const word = wordSet.find(w => w.id === currentQuestion.wordId);
+              if (word) {
+                speak(word.word, 'en-US');
+              }
+            }}
           />
         )}
       </div>

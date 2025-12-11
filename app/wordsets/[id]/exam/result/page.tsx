@@ -4,7 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useExamSession } from '@/app/hooks/useExamSession';
 import { ExamResult } from '@/app/components/exam/ExamResult';
+import { wordsToWordItems } from '@/lib/utils/exam';
 import type { ExamResult as ExamResultType, WordItem } from '@/lib/utils/exam/types';
+import type { Word } from '@/app/types/learn';
 
 /**
  * Exam Result Page
@@ -28,28 +30,50 @@ export default function ResultPage() {
   const params = useParams();
   const wordSetId = params.id as string;
 
-  // Mock word set data (in production, fetch from API)
-  const mockWordSet: WordItem[] = [
-    { id: '1', word: 'apple', meaning: 'A red fruit' },
-    { id: '2', word: 'banana', meaning: 'A yellow fruit' },
-    { id: '3', word: 'cherry', meaning: 'A small red fruit' },
-    { id: '4', word: 'date', meaning: 'A sweet dried fruit' },
-    { id: '5', word: 'elderberry', meaning: 'A dark purple berry' },
-  ];
+  // State for loaded word set data
+  const [wordSet, setWordSet] = useState<WordItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Initialize exam session hook
   const { status, answers, questions, resetExam, startTime } = useExamSession(
     wordSetId,
-    mockWordSet
+    wordSet
   );
 
   const [result, setResult] = useState<ExamResultType | null>(null);
 
+  // Load word set data from API
+  useEffect(() => {
+    const loadWordSet = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/wordsets/${wordSetId}`);
+        if (!response.ok) {
+          throw new Error('Failed to fetch wordset');
+        }
+
+        const data = await response.json();
+        const convertedWords = wordsToWordItems(data.words as Word[]);
+        setWordSet(convertedWords);
+      } catch (err) {
+        console.error('Error loading wordset:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (wordSetId) {
+      loadWordSet();
+    }
+  }, [wordSetId]);
+
   // Calculate result when component mounts
   useEffect(() => {
-    if (status !== 'completed' || answers.length === 0) {
-      // Auto-redirect if exam not completed
-      router.push('./');
+    if (isLoading || status !== 'completed' || answers.length === 0) {
+      // Auto-redirect if exam not completed or still loading
+      if (!isLoading && status !== 'completed') {
+        router.push('./');
+      }
       return;
     }
 
@@ -65,7 +89,7 @@ export default function ResultPage() {
       percentage,
       duration,
     });
-  }, [status, answers, startTime, router]);
+  }, [status, answers, startTime, router, isLoading]);
 
   /**
    * Handle retry exam

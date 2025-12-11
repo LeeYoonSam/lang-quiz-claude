@@ -4,7 +4,9 @@ import React, { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { useExamSession } from '@/app/hooks/useExamSession';
 import { ExamConfigScreen } from '@/app/components/exam/ExamConfigScreen';
+import { wordsToWordItems } from '@/lib/utils/exam';
 import type { WordItem } from '@/lib/utils/exam/types';
+import type { Word } from '@/app/types/learn';
 
 /**
  * Exam Config Page
@@ -23,8 +25,7 @@ export default function ExamPage() {
   const params = useParams();
   const wordSetId = params.id as string;
 
-  // Placeholder for actual word set data
-  // In production, this would be fetched from an API based on wordSetId
+  // State for loaded word set data
   const [wordSet, setWordSet] = useState<WordItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -32,26 +33,29 @@ export default function ExamPage() {
   // Initialize exam session hook
   const { startExam } = useExamSession(wordSetId, wordSet);
 
-  // Load word set data
+  // Load word set data from API
   useEffect(() => {
     const loadWordSet = async () => {
       try {
         setIsLoading(true);
-        // TODO: Replace with actual API call
-        // const response = await fetch(`/api/wordsets/${wordSetId}`);
-        // const data = await response.json();
-        // setWordSet(data.words);
-
-        // Mock data for now
-        const mockWords: WordItem[] = [
-          { id: '1', word: 'apple', meaning: 'A red fruit' },
-          { id: '2', word: 'banana', meaning: 'A yellow fruit' },
-          { id: '3', word: 'cherry', meaning: 'A small red fruit' },
-          { id: '4', word: 'date', meaning: 'A sweet dried fruit' },
-          { id: '5', word: 'elderberry', meaning: 'A dark purple berry' },
-        ];
-        setWordSet(mockWords);
         setError(null);
+
+        // Fetch wordset data from API
+        const response = await fetch(`/api/wordsets/${wordSetId}`);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch wordset: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Validate response has words array
+        if (!Array.isArray(data.words)) {
+          throw new Error('Invalid wordset response: missing words array');
+        }
+
+        // Convert Word[] to WordItem[] using adapter
+        const convertedWords = wordsToWordItems(data.words as Word[]);
+        setWordSet(convertedWords);
       } catch (err) {
         const errorMessage = err instanceof Error ? err.message : 'Failed to load word set';
         setError(errorMessage);

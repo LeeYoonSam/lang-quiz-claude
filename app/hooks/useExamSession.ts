@@ -61,7 +61,7 @@ export interface UseExamSessionResult {
   resetExam: () => void;
 }
 
-const STORAGE_KEY_PREFIX = 'exam-session-';
+const STORAGE_KEY_PREFIX = 'exam_session_';
 
 /**
  * Load session from sessionStorage with error handling
