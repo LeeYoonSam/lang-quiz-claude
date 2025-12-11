@@ -68,7 +68,7 @@ export function ExamResult({
 
           {/* Score Display */}
           <div className="space-y-2">
-            <div className="text-6xl font-bold text-blue-600">
+            <div className="text-6xl font-bold text-blue-600" data-testid="result-score">
               {percentage.toFixed(1)}점
             </div>
             <p className="text-2xl text-gray-700">
@@ -110,6 +110,7 @@ export function ExamResult({
               {incorrectWords.map((word) => (
                 <div
                   key={word.id}
+                  data-testid="incorrect-word-item"
                   className="p-3 bg-red-50 border-l-4 border-red-500 rounded"
                 >
                   <p className="font-semibold text-red-700">{word.word}</p>

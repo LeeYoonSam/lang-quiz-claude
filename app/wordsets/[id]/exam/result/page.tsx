@@ -133,6 +133,15 @@ export default function ResultPage() {
     );
   }
 
+  // Get incorrect words
+  const incorrectWords = answers
+    .filter(a => !a.isCorrect)
+    .map(a => {
+      const question = questions[a.questionIndex];
+      return wordSet.find(w => w.id === question?.wordId);
+    })
+    .filter(Boolean) as WordItem[];
+
   return (
     <div>
       <ExamResult
@@ -140,6 +149,7 @@ export default function ResultPage() {
         onRetry={handleRetry}
         onFinish={handleFinish}
         onReviewIncorrect={handleReviewIncorrect}
+        incorrectWords={incorrectWords}
       />
     </div>
   );

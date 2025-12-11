@@ -4,11 +4,13 @@ import { NextResponse } from "next/server";
 // @API-GET-FOLDER-DETAIL
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
+
     const folder = await prisma.folder.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         _count: {
           select: { wordSets: true },
@@ -36,9 +38,10 @@ export async function GET(
 // @API-PUT-FOLDERS
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
     const body = await request.json();
 
     // Input validation
@@ -74,7 +77,7 @@ export async function PUT(
 
     // Check if folder exists
     const existingFolder = await prisma.folder.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!existingFolder) {
@@ -86,7 +89,7 @@ export async function PUT(
 
     // Update folder
     const updatedFolder = await prisma.folder.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...(body.name !== undefined && { name: body.name }),
         ...(body.description !== undefined && { description: body.description }),
@@ -111,12 +114,14 @@ export async function PUT(
 // @API-DELETE-FOLDERS @TEST-FOLDER-DELETE-NULLIFY
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
+
     // Check if folder exists and get wordset count
     const folder = await prisma.folder.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: {
         _count: {
           select: { wordSets: true },
@@ -133,7 +138,7 @@ export async function DELETE(
 
     // Delete the folder (onDelete: SetNull will nullify wordsets)
     await prisma.folder.delete({
-      where: { id: params.id },
+      where: { id },
     });
 
     return NextResponse.json({

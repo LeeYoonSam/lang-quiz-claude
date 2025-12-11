@@ -86,7 +86,7 @@ interface DialogOverlayProps extends React.HTMLAttributes<HTMLDivElement> {}
  * Backdrop/overlay that closes dialog when clicked
  */
 const DialogOverlay = React.forwardRef<HTMLDivElement, DialogOverlayProps>(
-  ({ onClick, className, ...props }, ref) => {
+  ({ onClick, className }, ref) => {
     const { onOpenChange } = useDialog();
 
     const handleClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -105,7 +105,6 @@ const DialogOverlay = React.forwardRef<HTMLDivElement, DialogOverlayProps>(
           'fixed inset-0 z-40 bg-black/50 backdrop-blur-sm',
           className
         )}
-        {...props}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -126,7 +125,7 @@ interface DialogContentProps extends React.HTMLAttributes<HTMLDivElement> {
  * Main dialog container with modal functionality
  */
 const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
-  ({ children, className, ...props }, ref) => {
+  ({ children, className }, ref) => {
     const { open, onOpenChange } = useDialog();
     const contentRef = useRef<HTMLDivElement>(null);
     const previousActiveElement = useRef<HTMLElement | null>(null);
@@ -180,7 +179,6 @@ const DialogContent = React.forwardRef<HTMLDivElement, DialogContentProps>(
                 'p-6 max-h-[90vh] overflow-y-auto',
                 className
               )}
-              {...props}
               initial={{ opacity: 0, scale: 0.95, y: -10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: -10 }}

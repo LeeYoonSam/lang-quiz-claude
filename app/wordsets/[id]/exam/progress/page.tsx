@@ -167,6 +167,7 @@ export default function ProgressPage() {
       <ExamProgress
         currentIndex={currentIndex}
         totalQuestions={questions.length}
+        answeredCount={answers.length}
       />
 
       {/* Question Display */}

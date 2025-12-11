@@ -26,7 +26,7 @@ export function LearnProgress({ current, total }: LearnProgressProps) {
           className="h-full bg-blue-600"
           initial={{ width: '0%' }}
           animate={{ width: `${percentage}%` }}
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
+          transition={{ duration: 0.3, ease: 'easeInOut' as const }}
           data-testid="progress-bar"
         />
       </div>

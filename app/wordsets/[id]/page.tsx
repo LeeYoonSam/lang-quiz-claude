@@ -21,7 +21,7 @@ export default function WordSetDetailPage() {
   const deleteWordSetMutation = useDeleteWordSet();
   const updateWordSetMutation = useUpdateWordSet(id);
   const createWordMutation = useCreateWord(id);
-  const updateWordMutation = useUpdateWord("");
+  const updateWordMutation = useUpdateWord(id);
   const deleteWordMutation = useDeleteWord();
 
   const [isEditingSet, setIsEditingSet] = useState(false);
@@ -79,6 +79,7 @@ export default function WordSetDetailPage() {
     e.preventDefault();
     if (editingWordId) {
       await updateWordMutation.mutateAsync({
+        wordId: editingWordId,
         text: editWordText,
         meaning: editWordMeaning,
       });

@@ -37,7 +37,7 @@ export function MultipleChoiceQuestion({
     <div className="w-full space-y-6">
       {/* Question Prompt */}
       <div className="text-center">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900" data-testid="question-prompt">
           {question.prompt}
         </h2>
       </div>
@@ -86,6 +86,7 @@ export function MultipleChoiceQuestion({
           return (
             <button
               key={index}
+              data-testid={`choice-${index}`}
               onClick={() => !disabled && onSelectAnswer(choice)}
               className={buttonClassName}
               disabled={disabled || showResult}
@@ -100,7 +101,9 @@ export function MultipleChoiceQuestion({
 
       {/* Result Feedback */}
       {showResult && (
-        <div className={cn(
+        <div
+          data-testid="feedback-message"
+          className={cn(
           'p-4 rounded-lg text-center font-semibold',
           isCorrect
             ? 'bg-green-100 border-2 border-green-500 text-green-700'

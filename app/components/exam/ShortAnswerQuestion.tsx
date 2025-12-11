@@ -57,7 +57,7 @@ export function ShortAnswerQuestion({
     <div className="w-full space-y-6">
       {/* Question Prompt */}
       <div className="text-center">
-        <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
+        <h2 className="text-2xl md:text-3xl font-bold text-gray-900" data-testid="question-prompt">
           {question.prompt}
         </h2>
       </div>
@@ -85,6 +85,7 @@ export function ShortAnswerQuestion({
           onKeyDown={handleKeyDown}
           placeholder="답변을 입력하세요"
           disabled={disabled || showResult}
+          data-testid="short-answer-input"
           className={cn(
             'w-full px-4 py-3 text-lg border-2 rounded-lg focus:outline-none focus:ring-2 transition',
             disabled && 'opacity-50 cursor-not-allowed',
@@ -110,7 +111,9 @@ export function ShortAnswerQuestion({
 
       {/* Result Feedback */}
       {showResult && (
-        <div className={cn(
+        <div
+          data-testid="feedback-message"
+          className={cn(
           'p-4 rounded-lg text-center font-semibold space-y-2',
           isCorrect
             ? 'bg-green-100 border-2 border-green-500 text-green-700'

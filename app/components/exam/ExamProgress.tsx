@@ -44,6 +44,7 @@ export function ExamProgress({
             aria-valuenow={progressPercentage}
             aria-valuemin={0}
             aria-valuemax={100}
+            data-testid="progress-bar"
             className="w-full h-3 bg-gray-200 rounded-full overflow-hidden"
           >
             <div

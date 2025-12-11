@@ -7,17 +7,17 @@
 
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import type { FlipCardProps } from '@/app/types/learn';
 
-const flipVariants = {
+const flipVariants: Variants = {
   front: {
     rotateY: 0,
-    transition: { duration: 0.6, ease: 'easeInOut' },
+    transition: { duration: 0.6, ease: 'easeInOut' as const },
   },
   back: {
     rotateY: 180,
-    transition: { duration: 0.6, ease: 'easeInOut' },
+    transition: { duration: 0.6, ease: 'easeInOut' as const },
   },
 };
 

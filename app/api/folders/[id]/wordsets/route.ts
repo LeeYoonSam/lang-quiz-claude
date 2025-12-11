@@ -4,12 +4,14 @@ import { NextResponse } from "next/server";
 // @API-GET-FOLDERS-WORDSETS
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await context.params;
+
     // Check if folder exists
     const folder = await prisma.folder.findUnique({
-      where: { id: params.id },
+      where: { id },
     });
 
     if (!folder) {
@@ -21,7 +23,7 @@ export async function GET(
 
     // Get wordsets for the folder
     const wordsets = await prisma.wordSet.findMany({
-      where: { folderId: params.id },
+      where: { folderId: id },
       orderBy: { createdAt: "desc" },
       include: {
         _count: {

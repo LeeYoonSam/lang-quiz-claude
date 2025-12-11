@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef } from 'react';
-import { motion } from 'framer-motion';
+import { motion, Variants } from 'framer-motion';
 import { Volume2 } from 'lucide-react';
 
 interface Word {
@@ -18,18 +18,18 @@ interface FlipCardProps {
   isSpeaking: boolean;
 }
 
-const flipVariants = {
+const flipVariants: Variants = {
   front: {
     rotateY: 0,
-    transition: { duration: 0.6, ease: 'easeInOut' },
+    transition: { duration: 0.6, ease: 'easeInOut' as const },
   },
   back: {
     rotateY: 180,
-    transition: { duration: 0.6, ease: 'easeInOut' },
+    transition: { duration: 0.6, ease: 'easeInOut' as const },
   },
 };
 
-const speakerVariants = {
+const speakerVariants: Variants = {
   rest: { scale: 1 },
   speaking: {
     scale: [1, 1.2, 1],

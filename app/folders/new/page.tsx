@@ -1,9 +1,14 @@
+"use client";
+
 import { FolderForm } from "@/app/components/folders/FolderForm";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function NewFolderPage() {
+  const router = useRouter();
+
   const handleSuccess = () => {
-    // This will be handled by the client redirect
+    router.push("/folders");
   };
 
   return (
@@ -22,7 +27,7 @@ export default function NewFolderPage() {
       </div>
 
       <div className="bg-white rounded-lg shadow-md p-6">
-        <FolderForm onSuccess={() => window.location.href = "/folders"} />
+        <FolderForm onSuccess={handleSuccess} />
       </div>
     </div>
   );
