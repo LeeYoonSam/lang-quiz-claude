@@ -108,7 +108,28 @@ export default function WordSetDetailPage() {
             {wordset.description && (
               <p className="text-gray-600 mb-4">{wordset.description}</p>
             )}
-            <div className="flex gap-4">
+            <div className="mb-4">
+              <p className="text-gray-600 text-sm">단어 개수: {wordset.words?.length || 0}개</p>
+            </div>
+            <div className="flex gap-4 flex-wrap">
+              <button
+                onClick={() => router.push(`./exam`)}
+                disabled={!wordset.words || wordset.words.length < 4}
+                title={!wordset.words || wordset.words.length < 4 ? "시험을 시작하려면 최소 4개의 단어가 필요합니다" : ""}
+                className={`px-4 py-2 rounded font-medium transition ${
+                  !wordset.words || wordset.words.length < 4
+                    ? "bg-gray-300 text-gray-600 cursor-not-allowed opacity-50"
+                    : "bg-green-600 text-white hover:bg-green-700"
+                }`}
+              >
+                시험 시작
+              </button>
+              <button
+                onClick={() => router.push(`./learn`)}
+                className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 transition font-medium"
+              >
+                학습 시작
+              </button>
               <button
                 onClick={() => {
                   setSetName(wordset.name);

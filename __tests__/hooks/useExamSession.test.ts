@@ -250,7 +250,7 @@ describe('useExamSession', () => {
       await waitFor(() => {
         expect(mockSessionStorage.setItem).toHaveBeenCalled();
         const call = mockSessionStorage.setItem.mock.calls[0];
-        expect(call[0]).toBe('exam-session-wordset-1');
+        expect(call[0]).toBe('exam_session_wordset-1');
       });
     });
   });
@@ -851,7 +851,7 @@ describe('useExamSession', () => {
       });
 
       expect(mockSessionStorage.removeItem).toHaveBeenCalledWith(
-        'exam-session-wordset-1',
+        'exam_session_wordset-1',
       );
     });
   });
@@ -888,7 +888,7 @@ describe('useExamSession', () => {
       expect(result.current.status).toBe('in-progress');
     });
 
-    it('should use key format exam-session-{wordSetId}', async () => {
+    it('should use key format exam_session_{wordSetId}', async () => {
       const { result } = renderHook(() =>
         useExamSession('my-custom-set', mockWords),
       );
@@ -904,9 +904,9 @@ describe('useExamSession', () => {
       await waitFor(() => {
         const calls = mockSessionStorage.setItem.mock.calls;
         const key = calls.find((call) =>
-          call[0].startsWith('exam-session-'),
+          call[0].startsWith('exam_session_'),
         )?.[0];
-        expect(key).toBe('exam-session-my-custom-set');
+        expect(key).toBe('exam_session_my-custom-set');
       });
     });
 

@@ -10,8 +10,8 @@
 
 'use client';
 
-import { useParams, useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { FlipCard } from './FlipCard';
 import { LearnProgress } from './LearnProgress';
@@ -20,19 +20,27 @@ import { LearnModeSelect } from './LearnModeSelect';
 import { LearnComplete } from './LearnComplete';
 import { useLearnSession } from '@/app/hooks/useLearnSession';
 import { useSpeech } from '@/app/hooks/useSpeech';
-import type { LearnMode } from '@/app/types/learn';
+import type { LearnMode, Word } from '@/app/types/learn';
 
 type PageState = 'mode-select' | 'learning' | 'complete';
 
 export default function LearnPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const wordSetId = params.id as string;
 
   const [pageState, setPageState] = useState<PageState>('mode-select');
   const [mode, setMode] = useState<LearnMode>('sequential');
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [startTime] = useState(Date.now());
+
+  // Get query parameters for review mode
+  const reviewMode = searchParams.get('mode') === 'incorrect_review';
+  const reviewIds = useMemo(() => {
+    const idsParam = searchParams.get('ids');
+    return idsParam ? idsParam.split(',').filter(Boolean) : [];
+  }, [searchParams]);
 
   // Fetch word set data
   const { data: wordset, isLoading, error } = useQuery({
@@ -44,9 +52,26 @@ export default function LearnPage() {
     },
   });
 
+  // Filter words for review mode
+  const filteredWords = useMemo(() => {
+    if (!wordset?.words) return [];
+    if (!reviewMode) return wordset.words;
+
+    // Filter words based on review IDs
+    return wordset.words.filter((word: Word) => reviewIds.includes(word.id));
+  }, [wordset?.words, reviewMode, reviewIds]);
+
   // Learning session management
-  const learnSession = useLearnSession(wordSetId, wordset?.words || [], mode);
+  const learnSession = useLearnSession(wordSetId, filteredWords, mode);
   const { speak, isSpeaking } = useSpeech();
+
+  // Auto-start learning in review mode
+  useEffect(() => {
+    if (reviewMode && filteredWords.length > 0) {
+      setPageState('learning');
+      setMode('sequential');
+    }
+  }, [reviewMode, filteredWords]);
 
   // Handle mode selection
   const handleModeSelect = (selectedMode: LearnMode) => {
